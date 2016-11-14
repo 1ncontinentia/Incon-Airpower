@@ -19,7 +19,7 @@ this addaction ["Request Sentinel RPA","Sentinel\sentinelSpawn.sqf",[],1,false,t
 
 */
 
-private ["_percentage","_hqCallsign","_airCallsign","_nightTimeOnly","_dawn","_dusk","_minTimeOnTgt","_randomDelay","_altitudeMin","_altitudeRandom","_radius","_speed","_ammoArray","_targetHVTs","_maxCollateral","_sideFriendly","_trackingEnabled","_percentageReliability","_isAffectedByOvercast","_objectOcclusion","_maxOvercastDegradation","_trackingRange","_terminalNecessary","_friendlySide"];
+private ["_playeTimeVar","_playTime","_percentage","_hqCallsign","_airCallsign","_nightTimeOnly","_dawn","_dusk","_aircraftType","_minTimeOnTgt","_randomDelay","_altitudeMin","_altitudeRandom","_radius","_speed","_ammoArray","_targetHVTs","_maxCollateral","_sideFriendly","_trackingEnabled","_percentageReliability","_isAffectedByOvercast","_objectOcclusion","_maxOvercastDegradation","_trackingRange","_terminalNecessary","_friendlySide"];
 
 //General Options
 _percentage = 100;
@@ -31,13 +31,15 @@ _dusk = 19;
 
 
 //Aicraft options
-_minTimeOnTgt = 2;                     //How long should the aircraft take to reach the AO in seconds
+_aircraftType = "RQ-170 Sentinel";      //Aircraft type (for voice procedure, does not change anything about strike)
+_minTimeOnTgt = 2;                      //How long should the aircraft take to reach the AO in seconds
 _randomDelay = 3;                       //Random delay factor (could be delayed by up to this many seconds)
 _altitudeMin = 5000;                    //Minimum altitude of ordnance launch
 _altitudeRandom = 1000;                 //Random additional altitude above minimum for ordnance launch
 _radius = 1500;                         //Radius of launch position around player in meters
 _rtbOnNoAmmo = false; 					//Should the unit RTB when out of ammo?
-_multiAllowed = true;                   //Mark multiple targets simultaneaously
+_playTime = 60;                         //Amount of time aircraft will remain on station (in minutes)
+_playeTimeVar = 5;                      //Variation in minutes for time on station
 
 //Ordnance options
 _bomb = 5;							    //How many GBUs will the air unit carry?
