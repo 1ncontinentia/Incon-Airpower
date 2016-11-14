@@ -9,11 +9,7 @@ if (!local _callingObject) exitWith {};
 
 if (!_repeat) then {
 
-	_callingObject globalChat "Standby for target mark.";
-
-	sleep (1 + (random 2));
-
-	_hqObject globalChat format ["%1: Roger, standing by.",_airCallsign];
+	//_callingObject globalChat "Standby for mark type.";
 
 };
 
@@ -42,9 +38,9 @@ _callingObject setVariable ["INC_stageProceed",false];
 if (_callingObject getVariable ["INC_abortStrike",false]) exitWith {
 	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
 	sleep 0.2;
-	_callingObject globalChat "Cancel strike request.";
+	_callingObject globalChat "Abort.";
 	sleep 1;
-	_hqObject globalChat format ["%1: Roger, disengaging.",_airCallsign];
+	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
 	[_callingObject,"AbortStrike"] call SEN_fnc_senMain;
 };
 //=======================================================================//
@@ -59,7 +55,7 @@ _markerColourLwr = (toLower _markerColour);
 
 sleep (1 + (random 2));
 
-_hqObject globalChat format ["%1: Roger, searching for target mark in your area.",_airCallsign];
+_hqObject globalChat format ["%1: Roger, scanning.",_airCallsign];
 
 sleep 1;
 
@@ -95,7 +91,7 @@ _primaryTarget = (_nearbyThrowArray select 0);
 //=======================================================================//
 private _defaultTargetPos = [((getPosATL _primaryTarget select 0) + (random 2) - (random 4)), ((getPosATL _primaryTarget select 1) + (random 2) - (random 4)),((getPosATL _primaryTarget select 2) + 2)];
 
-sleep 2;
+sleep 1;
 
 _stickyTargetActive = false;
 
@@ -106,10 +102,15 @@ if (typeName _stickyTarget == "OBJECT") then {
 
 	if (_stickyTarget isKindOf "Man") then {
 
-		_hqObject globalChat format ["%1: Infantry detected near target marker, select guidance.",_airCallsign];
+		_hqObject globalChat format ["%1: Tally infantry near target marker, confirm target.",_airCallsign];
 	} else {
+		if (_stickyTarget isKindOf "Tank") then {
 
-		_hqObject globalChat format ["%1: Vehicle detected near target marker, select guidance.",_airCallsign];
+			_hqObject globalChat format ["%1: Tally vehicle near target marker, confirm target.",_airCallsign];
+		} else {
+
+			_hqObject globalChat format ["%1: Tally vehicle near target marker, confirm target.",_airCallsign];
+		};
 	};
 
 	[_callingObject,"StickyTargetSelect"] call SEN_fnc_actionHandler;
@@ -125,27 +126,41 @@ if (typeName _stickyTarget == "OBJECT") then {
 
 	//If unit hasn't aborted and wants to track, confirm tracking and update targets
 	if (_callingObject getVariable ["INC_stickyTarget",false]) then {
-		_callingObject globalChat "Track and engage detected units.";
+
+		if (_stickyTarget isKindOf "Man") then {
+
+			_callingObject globalChat "Target is infantry in the open.";
+		} else {
+
+			if (_stickyTarget isKindOf "Tank") then {
+
+				_callingObject globalChat "Target is armour in the open.";
+			} else {
+
+				_callingObject globalChat "Target is vehicle in the open.";
+			};
+		};
+
 		sleep 1.5;
 		[_callingObject,"ConfirmSticky",[_stickyTarget,_hqObject]] call SEN_fnc_senMain;
 		_stickyTargetActive = true;
 		_defaultTargetPos = [(getPosATL _primaryTarget select 0) + (random 5), (getPosATL _primaryTarget select 1) + (random 5),(getPosATL _primaryTarget select 2) + 2];
 	} else {
 
-		_callingObject globalChat "Engage my original mark.";
+		_callingObject globalChat "Engage my mark.";
 
 		sleep 1.5;
 
-		_hqObject globalChat format ["%1: Confirmed, engaging original mark.",_airCallsign];
+		_hqObject globalChat format ["%1: Confirmed, engaging mark.",_airCallsign];
 	};
 };
 
 //Abort option
 if (_callingObject getVariable ["INC_abortStrike",false]) exitWith {
 	sleep 0.2;
-	_callingObject globalChat "Cancel strike request.";
+	_callingObject globalChat "Abort.";
 	sleep 1;
-	_hqObject globalChat format ["%1: Roger, disengaging.",_airCallsign];
+	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
 	[_callingObject,"AbortStrike"] call SEN_fnc_senMain;
 };
 
@@ -161,10 +176,12 @@ switch (_stickyTargetActive) do {
 
 _primaryTarget = _secondaryTarget;
 
+_callingObject globalChat format ["Restrictions per ROE. Ground commander's intent is to destroy marked target with %1.",(_callingObject getVariable ["INC_ammoType","missile"])];
+
 
 sleep 1;
 
-_hqObject globalChat format ["%1: Conducting collateral damage assessment.",_airCallsign];
+_hqObject globalChat format ["%1: Roger, restrictions per ROE. Conducting collateral damage assessment.",_airCallsign];
 
 //=======================================================================//
 
@@ -177,8 +194,9 @@ sleep (3 + (random 2));
 //Abort option
 if (_callingObject getVariable ["INC_abortStrike",false]) exitWith {
 	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
+	_callingObject globalChat "Abort.";
 	sleep 1;
-	_hqObject globalChat format ["%1: Abort request recieved, disengaging.",_airCallsign];
+	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
 	[_callingObject,"AbortStrike",[_secondaryTarget]] call SEN_fnc_senMain;
 };
 
@@ -187,8 +205,9 @@ sleep (3 + (random 5));
 //Abort option
 if (_callingObject getVariable ["INC_abortStrike",false]) exitWith {
 	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
+	_callingObject globalChat "Abort.";
 	sleep 1;
-	_hqObject globalChat format ["%1: Abort request recieved, disengaging.",_airCallsign];
+	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
 	[_callingObject,"AbortStrike",[_secondaryTarget]] call SEN_fnc_senMain;
 };
 
@@ -200,16 +219,16 @@ _cdePass = [_callingObject,"DamageEstimateFeedback",[_primaryTarget,_hqObject]] 
 if (!_cdePass) exitWith {
 	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
 	sleep (1 + (random 1));
-	_hqObject globalChat format ["%1: Collateral damage is too high, designated target does not fit within ROE. %1 is disengaging.",_airCallsign,_airCallsign];
+	_hqObject globalChat format ["%1: Designated target does not fit within ROE. %1 is disengaging.",_airCallsign,_airCallsign];
 	[_callingObject,"AbortStrike",[_secondaryTarget]] call SEN_fnc_senMain;
 };
 
 //Abort option
 if (_callingObject getVariable ["INC_abortStrike",false]) exitWith {
 	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
-	_callingObject globalChat "Cancel strike.";
+	_callingObject globalChat "Abort.";
 	sleep 1;
-	_hqObject globalChat format ["%1: Abort request recieved, disengaging.",_airCallsign];
+	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
 	[_callingObject,"AbortStrike",[_secondaryTarget]] call SEN_fnc_senMain;
 };
 
@@ -231,9 +250,9 @@ _callingObject setVariable ["INC_stageProceed",false];
 //Abort option
 if (_callingObject getVariable ["INC_abortStrike",false]) exitWith {
 	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
-	_callingObject globalChat "Cancel strike.";
+	_callingObject globalChat "Abort.";
 	sleep 1;
-	_hqObject globalChat format ["%1: Abort request recieved, disengaging.",_airCallsign];
+	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
 	[_callingObject,"AbortStrike",[_secondaryTarget]] call SEN_fnc_senMain;
 };
 //=======================================================================//
@@ -243,7 +262,7 @@ _callingObject globalChat format ["%1, you are cleared to engage.",_airCallsign]
 sleep (1 + (random 3));
 
 //Launch countdown
-_hqObject globalChat format ["%1: Roger. In position, weapon release in three...",_airCallsign];
+_hqObject globalChat format ["%1: Cleared to engage, weapon release in three...",_airCallsign];
 sleep (1.2 + (random 0.5));
 _hqObject globalChat format ["%1: Two...",_airCallsign];
 sleep (1.2 + (random 0.5));
