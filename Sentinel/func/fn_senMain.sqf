@@ -1,0 +1,400 @@
+params [["_callingObject",player],["_operation","InitActions"],["_args",[]]];
+
+private ["_return"];
+
+_return = false;
+
+#include "..\SEN_setup.sqf"
+
+switch (_operation) do {
+
+	case "NilVars": {
+
+		_callingObject setVariable ["INC_stageProceed",nil];
+		_callingObject setVariable ["INC_abortStrike",nil];
+		_callingObject setVariable ["SEN_targetArray",nil];
+		_callingObject getVariable ["INC_ammoType",nil];
+		_callingObject getVariable ["INC_ammoActionArray",nil];
+		_callingObject getVariable ["INC_markType",nil];
+		_callingObject getVariable ["INC_multiTarget",nil];
+		_callingObject setVariable ["INC_markColour",nil];
+		_callingObject setVariable ["INC_colourActions",nil];
+		_callingObject setVariable ["INC_stickyTarget",nil];
+		_callingObject setVariable ["INC_strikeCompleted",nil];
+		_callingObject setVariable ["INC_reconfirmStrike",nil];
+
+		_return = true;
+	};
+
+	case "AbortStrike": {
+
+		_args params [["_deleteObjectArray",false]];
+
+		private ["_storedTargetArray"];
+
+		missionNameSpace setVariable ["INC_sentinelEngaging", false, true];
+
+		_storedTargetArray = (_callingObject getVariable ["SEN_targetArray",false]);
+
+		if (typeName _storedTargetArray == "ARRAY") then {{deleteVehicle _x} forEach _storedTargetArray};
+
+		if (typeName _deleteObjectArray == "ARRAY") then {{deleteVehicle _x} forEach _deleteObjectArray};
+
+		[_callingObject,"NilVars"] call SEN_fnc_senMain;
+
+		_return = true;
+	};
+
+	case "HasEnoughAmmo": {
+
+		_args params [["_aircraftObject",sentinel],["_ammoType","missile"],["_ammoToExpend",1]];
+
+		private ["_ammoArray","_bombCount","_missile"];
+
+		_ammoArray = missionNamespace getVariable "SEN_ammoArray";
+
+		_ammoArray params ["_bombCount","_missileCount"];
+
+		switch (_ammoType) do {
+			case "bomb": {
+				_return = (_bombCount >= _ammoToExpend);
+			};
+
+			case "missile": {
+				_return = (_missileCount >= _ammoToExpend);
+			};
+		};
+	};
+
+	case "AmmoAvailable": {
+
+		private ["_ammoArray","_bombCount","_missile"];
+
+		_ammoArray = missionNamespace getVariable ["SEN_ammoArray",[]];
+
+		_ammoArray params [["_bombCount",2],["_missileCount",4]];
+
+		_return = true;
+
+		if ((_bombCount + _missileCount) <= 0) then {
+			_return = false;
+		};
+	};
+
+	case "SetAmmo": {
+
+		_args params [["_aircraftObject",sentinel],["_ammoType","bomb"],["_ammoExpended",1]];
+
+		private ["_ammoArray","_newAmmoCount"];
+
+		_ammoArray = missionNamespace getVariable "SEN_ammoArray";
+
+		_ammoArray params ["_bomb","_missile"];
+
+		switch (_ammoType) do {
+			case "bomb": {
+				_bomb = _bomb - _ammoExpended;
+			};
+
+			case "missile": {
+				_missile = _missile - _ammoExpended;
+			};
+		};
+
+		_newAmmoCount = [_bomb,_missile];
+
+		missionNamespace setVariable ["SEN_ammoArray", _newAmmoCount, true];
+
+		_return = ((_bomb + _missile) >= 1);
+	};
+
+	case "ThrowMarkerInstr": {
+
+		private ["_nearbyThrowArray","_isNight","_markerColour","_markerColourLwr"];
+
+		if (daytime >= _dusk || daytime < _dawn) then {_isNight = true} else {_isNight = false};
+
+		_markerColour = (_callingObject getVariable "INC_markColour");
+
+		_markerColourLwr = (toLower _markerColour);
+
+		_nearbyThrowArray = [];
+
+		switch (_isNight) do {
+			case true: {
+
+				switch (_markerColour isEqualTo "IR") do {
+					case true: {
+						_callingObject globalChat "Target is marked with Infrared.";
+					};
+					case false: {
+						_callingObject globalChat format ["Target is marked with a %1 chemlight.",_markerColourLwr];
+					};
+				};
+			};
+
+			case false: {
+				_callingObject globalChat format ["Target is marked with %1 smoke.",_markerColourLwr];
+			};
+		};
+
+		_return = true;
+	};
+
+	case "FindThrowMarker": {
+
+		private ["_nearbyThrowArray","_isNight","_markerColour"];
+
+		if (daytime >= _dusk || daytime < _dawn) then {_isNight = true} else {_isNight = false};
+
+		_markerColour = (_callingObject getVariable "INC_markColour");
+
+		_nearbyThrowArray = [];
+
+		switch (_isNight) do {
+			case true: {
+
+				switch (_markerColour isEqualTo "IR") do {
+					case true: {
+						_nearbyThrowArray = (nearestObjects [getPosATL _callingObject, [], 400]) select {(((str typeOf _x) find "IR") >= 0) && {!(((str typeOf _x) find "Dummy") >= 0)}};
+					};
+					case false: {
+						_nearbyThrowArray = (nearestObjects [getPosATL _callingObject, [], 400]) select {(((str typeOf _x) find "Chemlight") >= 0) && {((((str typeOf _x) find _markerColourLwr) >= 0) || {(((str typeOf _x) find _markerColour) >= 0)})}};
+					};
+				};
+			};
+
+			case false: {
+				_nearbyThrowArray = (nearestObjects [getPosATL _callingObject, [], 400]) select {
+					(((str typeOf _x) find "Smoke") >= 0) && {(((str typeOf _x) find _markerColour) >= 0)}
+				};
+			};
+		};
+
+		_return = _nearbyThrowArray;
+
+	};
+
+	case "ThrowMarkerSeen": {
+
+		_args params ["_nearbyThrowArray","_hqObject"];
+
+		private ["_markerColour"];
+
+		_markerColour = (toLower (_callingObject getVariable "INC_markColour"));
+
+		if ((count _nearbyThrowArray) == 1) then {
+			sleep (1 + (random 3));
+			private _comment1 = format ["%1: Found a %2 target marker at grid %3, standby.",_airCallsign,_markerColour,(mapGridPosition (_nearbyThrowArray select 0))];
+			private _comment2 = format ["%1: We've got eyes on a %2 target marker in your vicinity, standby.",_airCallsign,_markerColour,(mapGridPosition (_nearbyThrowArray select 0))];
+			_hqObject globalChat selectRandom [_comment1,_comment2];
+		} else {
+			sleep (1 + (random 3));
+			_hqObject globalChat format ["%1: %2 %3 target markers found in your vicinity, engaging the closest to your location, standby.",_airCallsign,(count _nearbyThrowArray),_markerColour];
+		};
+
+		_return = _nearbyThrowArray;
+
+	};
+
+	case "StickyTarget": {
+
+		_args params ["_primaryTarget",["_radius",15]];
+
+		private ["_stickyTargetArray","_stickyTarget"];
+
+		_stickyTargetArray = (
+			(nearestObjects [_primaryTarget, ["car","tank","helicopter","man"], _radius]) select {
+				((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo []) &&
+				{side _x != _sideFriendly}
+			}
+		);
+
+		if ((count _stickyTargetArray) != 0) then {
+			_stickyTarget = _stickyTargetArray select 0;
+		} else {
+			_stickyTarget = false;
+		};
+
+		_return = _stickyTarget;
+	};
+
+	case "StickyTargetWide": {
+
+		_args params ["_primaryTarget",["_radius",50]];
+
+		private ["_stickyTargetArray","_stickyTarget"];
+
+		_stickyTargetArray = (
+			(nearestObjects [_primaryTarget, ["tank","helicopter","car"], _radius]) select {
+				((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo []) &&
+				{side _x != _sideFriendly} &&
+				{side _x != civilian}
+			}
+		);
+
+		if ((count _stickyTargetArray) != 0) then {
+
+			_stickyTarget = _stickyTargetArray select 0;
+		} else {
+
+			_stickyTargetArray = (
+				(nearestObjects [_primaryTarget, ["man"], _radius]) select {
+					((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo []) &&
+					{side _x != _sideFriendly} &&
+					{side _x != civilian}
+				}
+			);
+
+			if ((count _stickyTargetArray) != 0) then {
+
+				_stickyTarget = _stickyTargetArray select 0;
+			} else {
+
+				_stickyTarget = false;
+			};
+		};
+
+		_return = _stickyTarget;
+	};
+
+	case "ConfirmSticky": {
+
+		_args params ["_stickyTarget","_hqObject"];
+
+		if !(_stickyTarget isKindOf "Man") then {
+
+			if (_stickyTarget isKindOf "Tank") then {
+
+				_hqObject globalChat format ["%1: Confirmed, tracking the target armour.",_airCallsign];
+
+			} else {
+
+				_hqObject globalChat format ["%1: Confirmed, tracking the target vehicle.",_airCallsign];
+			};
+
+		} else {
+
+			_hqObject globalChat format ["%1: Confirmed, tracking the target infantry.",_airCallsign];
+		};
+		_return = true;
+	};
+
+	case "SaveTarget": {
+
+		_args params [["_target",objNull]];
+
+		private ["_targetArray","_newTargetArray"];
+
+		_targetArray = _callingObject getVariable ["SEN_targetArray",[]];
+
+		if (!isNil "_target") then {
+			_targetArray pushBack _target;
+		};
+
+		_callingObject setVariable ["SEN_targetArray", _targetArray];
+
+		_return = (count _targetArray);
+	};
+
+	case "DamageEstimate": {
+
+		_args params ["_primaryTarget","_hqObject",["_killRadius",35],["_distFromHVT",150]];
+
+		private _nearbyFriendlies = [];
+		private _nearbyCollateral = [];
+		private _nearbySensitive = [];
+
+		_return = true;
+
+		//Find friendlies
+		{
+			if (side _x == _sideFriendly) then {
+				_nearbyFriendlies pushBack _x;
+			};
+		} foreach (((position _primaryTarget) nearEntities [["Man", "Car", "Motorcycle"], _killRadius]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
+
+		if (count _nearbyFriendlies != 0) exitWith {
+			_return = false;
+		};
+
+		//Find civilians
+		{
+			if (side _x == civilian) then {
+				_nearbyCollateral pushBack _x;
+			};
+		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "Car", "Motorcycle", "Tank"], _killRadius]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
+
+		if (count _nearbyCollateral > _maxCollateral) exitWith {
+			_return = false;
+		};
+
+		//Find HVTs
+		{
+			if ((_x getVariable ["isHVT",false]) || {(_x getVariable ["isSuperHVT",false])}) then {
+				_nearbySensitive pushBack _x;
+			};
+		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "Car", "Motorcycle", "Tank"], _distFromHVT]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
+
+		if ((count _nearbySensitive != 0) && {!(_targetHVTs)}) exitWith {
+			_return = false;
+		};
+	};
+
+	case "DamageEstimateFeedback": {
+
+		_args params ["_primaryTarget","_hqObject",["_killRadius",35],["_distFromHVT",150]];
+
+		private _nearbyFriendlies = [];
+		private _nearbyCollateral = [];
+		private _nearbySensitive = [];
+
+		_return = true;
+
+		//Find friendlies
+		{
+			if (side _x == _sideFriendly) then {
+				_nearbyFriendlies pushBack _x;
+			};
+		} foreach (((position _primaryTarget) nearEntities [["Man", "Car", "Motorcycle"], _killRadius]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
+
+		if (count _nearbyFriendlies != 0) exitWith {
+			if (count _nearbyFriendlies >= 1) then {
+				_hqObject globalChat format ["%1: Be advised, CDE shows there are %2 friendlies in the kill zone.",_airCallsign,(count _nearbyFriendlies)];
+			} else {
+				_hqObject globalChat format ["%1: Be advised, CDE shows there are friendlies in the kill zone.",_airCallsign,(count _nearbyFriendlies)];
+			};
+			_return = false;
+		};
+
+		//Find civilians
+		{
+			if (side _x == civilian) then {
+				_nearbyCollateral pushBack _x;
+			};
+		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "Car", "Motorcycle", "Tank"], _killRadius]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
+
+		if (count _nearbyCollateral > _maxCollateral) exitWith {
+			if (count _nearbyCollateral >= 1) then {
+				_hqObject globalChat format ["%1: Be advised, CDE shows there are %2 civilians in the kill zone.",_airCallsign,(count _nearbyCollateral)];
+			} else {
+				_hqObject globalChat format ["%1: Be advised, CDE shows there are civilians in the kill zone.",_airCallsign,(count _nearbyCollateral)];
+			};
+			_return = false;
+		};
+
+		//Find HVTs
+		{
+			if ((_x getVariable ["isHVT",false]) || {(_x getVariable ["isSuperHVT",false])}) then {
+				_nearbySensitive pushBack _x;
+			};
+		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "Car", "Motorcycle", "Tank"], _distFromHVT]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
+
+		if ((count _nearbySensitive != 0) && {!(_targetHVTs)}) exitWith {
+			_hqObject globalChat format ["%1: Be advised, there are sensitive targets in the AO.",_airCallsign];
+			_return = false;
+		};
+	};
+};
+
+_return
