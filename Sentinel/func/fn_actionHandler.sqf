@@ -10,7 +10,7 @@ switch (_operation) do {
 
 	case "AbortOption": {
 		INC_abortStrike = _callingObject addAction [
-			"<t color='#FF0000'>Abort strike</t>", {
+			"<t color='#FF0000'>Abort CAS Mission</t>", {
 				_callingObject = _this select 0;
 				_callingObject setVariable ["INC_abortStrike",true,true];
 				_callingObject removeAction INC_abortStrike;
@@ -24,7 +24,7 @@ switch (_operation) do {
 	case "ConfirmTarget": {
 
 		INC_confirmTarget = _callingObject addAction [
-			"<t color='#D8FF00'>Confirm Target Mark</t>", {
+			"<t color='#D8FF00'>Confirm Mark</t>", {
 				_callingObject = _this select 0;
 				_callingObject removeAction INC_confirmTarget;
 				_callingObject removeAction INC_cancelTarget;
@@ -35,7 +35,7 @@ switch (_operation) do {
 		];
 
 		INC_cancelTarget = _callingObject addAction [
-			"<t color='#FF0000'>Cancel Target Mark</t>", {
+			"<t color='#FF0000'>Abort CAS Mission</t>", {
 				_callingObject = _this select 0;
 				_callingObject removeAction INC_confirmTarget;
 				_callingObject removeAction INC_cancelTarget;
@@ -142,7 +142,7 @@ switch (_operation) do {
 		];
 
 		INC_cancelSmokeTarget = _callingObject addAction [
-			"<t color='#FF0000'>ABORT STRIKE</t>", {
+			"<t color='#FF0000'>Abort CAS Mission</t>", {
 				_callingObject = _this select 0;
 				private _colourActions = (_callingObject getVariable "INC_colourActions");
 				{_callingObject removeAction _x} forEach _colourActions;
@@ -165,7 +165,7 @@ switch (_operation) do {
 	case "FinalConfirmation": {
 
 		INC_finalConfirm = _callingObject addAction [
-			"<t color='#D8FF00'>Cleared to engage</t>", {
+			"<t color='#D8FF00'>Clear to engage</t>", {
 				_callingObject = _this select 0;
 				_callingObject removeAction INC_finalConfirm;
 				_callingObject removeAction INC_finalCancel;
@@ -176,7 +176,7 @@ switch (_operation) do {
 		];
 
 		INC_finalCancel = _callingObject addAction [
-			"<t color='#FF0000'>Cancel Target Mark</t>", {
+			"<t color='#FF0000'>Abort CAS Mission</t>", {
 				_callingObject = _this select 0;
 				_callingObject removeAction INC_finalConfirm;
 				_callingObject removeAction INC_finalCancel;
@@ -218,7 +218,7 @@ switch (_operation) do {
 		];
 
 		INC_cancelStrikeRequest = _callingObject addAction [
-			"<t color='#FF0000'>Cancel Strike Request</t>", {
+			"<t color='#FF0000'>Cancel CAS Mission</t>", {
 				_callingObject = _this select 0;
 				_callingObject removeAction INC_confirmTargetThrow;
 				_callingObject removeAction INC_confirmTargetLaser;
@@ -236,7 +236,7 @@ switch (_operation) do {
 	case "MultiTarget": {
 
 		INC_confirmTargetMultiNeg = _callingObject addAction [
-			"<t color='#D8FF00'>Proceed with strike</t>", {
+			"<t color='#D8FF00'>Proceed with CAS</t>", {
 				_callingObject = _this select 0;
 				_callingObject removeAction INC_confirmTargetMultiAff;
 				_callingObject removeAction INC_confirmTargetMultiNeg;
@@ -266,7 +266,7 @@ switch (_operation) do {
 		];
 
 		INC_confirmTargetMultiRe = _callingObject addAction [
-			"<t color='#DC00FF'>Repeat current target mark</t>", {
+			"<t color='#DC00FF'>Repeat last target mark</t>", {
 				_callingObject = _this select 0;
 				_callingObject removeAction INC_confirmTargetMultiAff;
 				_callingObject removeAction INC_confirmTargetMultiNeg;
@@ -281,7 +281,7 @@ switch (_operation) do {
 		];
 
 		INC_cancelMultiTarget = _callingObject addAction [
-			"<t color='#FF0000'>Cancel Target Mark</t>", {
+			"<t color='#FF0000'>Abort CAS Mission</t>", {
 				_callingObject = _this select 0;
 				_callingObject removeAction INC_confirmTargetMultiAff;
 				_callingObject removeAction INC_confirmTargetMultiNeg;
@@ -300,7 +300,7 @@ switch (_operation) do {
 	case "confirmCorrect": {
 
 		INC_confirmMarkCorrect = _callingObject addAction [
-			"<t color='#D8FF00'>Proceed with strike</t>", {
+			"<t color='#D8FF00'>Proceed with CAS</t>", {
 				_callingObject = _this select 0;
 				_callingObject removeAction INC_confirmMarkCorrect;
 				_callingObject removeAction INC_confirmMarkRe;
@@ -314,7 +314,7 @@ switch (_operation) do {
 		];
 
 		INC_confirmMarkRe = _callingObject addAction [
-			"<t color='#DC00FF'>Repeat current target mark</t>", {
+			"<t color='#DC00FF'>Repeat last target mark</t>", {
 				_callingObject = _this select 0;
 				_callingObject removeAction INC_confirmMarkCorrect;
 				_callingObject removeAction INC_confirmMarkRe;
@@ -328,7 +328,7 @@ switch (_operation) do {
 		];
 
 		INC_cancelMarkTarget = _callingObject addAction [
-			"<t color='#FF0000'>Cancel Target Mark</t>", {
+			"<t color='#FF0000'>Abort CAS Mission</t>", {
 				_callingObject = _this select 0;
 				_callingObject removeAction INC_confirmMarkCorrect;
 				_callingObject removeAction INC_confirmMarkRe;
@@ -412,7 +412,7 @@ switch (_operation) do {
 
 		//Cancel target
 		INC_cancelSmokeTargetNight = _callingObject addAction [
-			"<t color='#FF0000'>ABORT STRIKE</t>", {
+			"<t color='#FF0000'>Abort CAS Mission</t>", {
 				_callingObject = _this select 0;
 				private _colourActions = (_callingObject getVariable "INC_colourActions");
 				{_callingObject removeAction _x} forEach _colourActions;
@@ -478,7 +478,7 @@ switch (_operation) do {
 		if ((_bombCount + _missileCount) >= 1) then {
 
 			INC_cancelSelectAmmo = _callingObject addAction [
-				"<t color='#FF0000'>Cancel Strike Request</t>", {
+				"<t color='#FF0000'>Abort CAS Mission</t>", {
 					_callingObject = _this select 0;
 					private _ammoActions = (_callingObject getVariable "INC_ammoActionArray");
 					{_callingObject removeAction _x} forEach _ammoActions;
@@ -526,7 +526,7 @@ switch (_operation) do {
 		];
 
 		INC_cancelStickyTarget = _callingObject addAction [
-			"<t color='#FF0000'>Abort Strike</t>", {
+			"<t color='#FF0000'>Abort CAS Mission</t>", {
 				_callingObject = _this select 0;
 				_callingObject removeAction INC_selectGuidance1;
 				_callingObject removeAction INC_selectGuidance2;
