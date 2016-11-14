@@ -8,15 +8,6 @@ if (!local _callingObject) exitWith {};
 
 [_callingObject,"NilVars"] call SEN_fnc_senMain;
 
-//Check if aircraft is already engaging and exit if so
-if (missionNameSpace getVariable ["INC_sentinelEngaging",false]) exitWith {
-	_hqObject globalChat format ["%1: %2, this is %3, we are already engaging, wait out.",_airCallsign,(group _callingObject),_airCallsign];
-	[_callingObject,"AbortStrike"] call SEN_fnc_senMain;
-};
-
-//Prevent further attempts
-missionNameSpace setVariable ["INC_sentinelEngaging", true, true];
-
 //Check air unit has ammo available
 //=======================================================================//
 
@@ -50,12 +41,22 @@ if (_callingObject getVariable ["INC_abortStrike",false]) exitWith {
 //Strike ordnace now selected and stored in _callingObject getVariable ["INC_ammoType","missile"]; options are "bomb" or "missile".
 //Ammo selected, puts in request for bomb / missile strike with aircraft
 
-_callingObject globalChat format ["%1, this is %2, requesting targeted %3 strike in the vicinity of GRID %4, over.",_airCallsign,(group _callingObject),(_callingObject getVariable ["INC_ammoType","missile"]),(mapGridPosition _callingObject)];
+_callingObject globalChat format ["%1, this is %2, requesting immediate CAS, over.",_airCallsign,(group _callingObject)];
 
 //Natural pause for reply
 sleep (1 +(random 1));
 
-_hqObject globalChat format ["%1: %2, this is %3, request recieved, advise on target mark.",_airCallsign,(group _callingObject),_airCallsign];
+//Check if aircraft is already engaging and exit if so
+if (missionNameSpace getVariable ["INC_sentinelEngaging",false]) exitWith {
+	_hqObject globalChat format ["%1: %2, %3 is already engaged, wait out.",_airCallsign,(group _callingObject),_airCallsign];
+	[_callingObject,"AbortStrike"] call SEN_fnc_senMain;
+};
+
+//Prevent further attempts
+missionNameSpace setVariable ["INC_sentinelEngaging", true, true];
+
+
+_hqObject globalChat format ["%1: %2, this is %3, roger, send 9-liner.",_airCallsign,(group _callingObject),_airCallsign];
 
 
 //Select target marker
@@ -75,11 +76,14 @@ if (_callingObject getVariable ["INC_abortStrike",false]) exitWith {
 	sleep 0.5;
 	_callingObject globalChat "Cancel my last.";
 	sleep 1;
-	_hqObject globalChat format ["%1: Roger, disengaging.",_airCallsign];
+	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
 
 	[_callingObject,"AbortStrike"] call SEN_fnc_senMain;
 };
 //=======================================================================//
+sleep 1;
+_callingObject globalChat format ["Type 2 control by %1, 1 through 3 N/A, targets in the open, grid %2.",(group _callingObject),(mapGridPosition _callingObject)];
+
 
 //Execute relevant script
 switch (_callingObject getVariable ["INC_markType","laser"]) do {
