@@ -125,16 +125,16 @@ switch (_operation) do {
 
 				switch (_markerColour isEqualTo "IR") do {
 					case true: {
-						_callingObject globalChat "Target is marked with Infrared.";
+						_callingObject globalChat format ["Target is marked with Infrared. Friendlies at grid %1.",(mapGridPosition _callingObject)];
 					};
 					case false: {
-						_callingObject globalChat format ["Target is marked with a %1 chemlight.",_markerColourLwr];
+						_callingObject globalChat format ["Target is marked with a %1 chemlight. Friendlies at grid %2.",_markerColourLwr,(mapGridPosition _callingObject)];
 					};
 				};
 			};
 
 			case false: {
-				_callingObject globalChat format ["Target is marked with %1 smoke.",_markerColourLwr];
+				_callingObject globalChat format ["Target is marked with %1 smoke, friendlies at grid %2.",_markerColourLwr,(mapGridPosition _callingObject)];
 			};
 		};
 
@@ -184,12 +184,8 @@ switch (_operation) do {
 		_markerColour = (toLower (_callingObject getVariable "INC_markColour"));
 
 		if ((count _nearbyThrowArray) == 1) then {
-			sleep (1 + (random 3));
-			private _comment1 = format ["%1: Found a %2 target marker at grid %3, standby.",_airCallsign,_markerColour,(mapGridPosition (_nearbyThrowArray select 0))];
-			private _comment2 = format ["%1: We've got eyes on a %2 target marker in your vicinity, standby.",_airCallsign,_markerColour,(mapGridPosition (_nearbyThrowArray select 0))];
-			_hqObject globalChat selectRandom [_comment1,_comment2];
+			_hqObject globalChat format ["%1: Eyes on %2 target marker, standby.",_airCallsign,_markerColour];
 		} else {
-			sleep (1 + (random 3));
 			_hqObject globalChat format ["%1: %2 %3 target markers found in your vicinity, engaging the closest to your location, standby.",_airCallsign,(count _nearbyThrowArray),_markerColour];
 		};
 
@@ -266,16 +262,16 @@ switch (_operation) do {
 
 			if (_stickyTarget isKindOf "Tank") then {
 
-				_hqObject globalChat format ["%1: Confirmed, tracking the target armour.",_airCallsign];
+				_hqObject globalChat format ["%1: Confirmed, tracking target armour.",_airCallsign];
 
 			} else {
 
-				_hqObject globalChat format ["%1: Confirmed, tracking the target vehicle.",_airCallsign];
+				_hqObject globalChat format ["%1: Confirmed, tracking target vehicle.",_airCallsign];
 			};
 
 		} else {
 
-			_hqObject globalChat format ["%1: Confirmed, tracking the target infantry.",_airCallsign];
+			_hqObject globalChat format ["%1: Confirmed, tracking target infantry.",_airCallsign];
 		};
 		_return = true;
 	};
