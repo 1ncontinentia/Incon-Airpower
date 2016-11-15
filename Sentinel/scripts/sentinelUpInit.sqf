@@ -6,6 +6,11 @@ private ["_ammoAvailable","_sentinelLaser","_tgt","_speed","_seconds","_ammo","_
 
 if (!local _callingObject) exitWith {};
 
+//Check if aircraft is already engaging and exit if so
+if (missionNameSpace getVariable ["INC_sentinelEngaging",false]) exitWith {
+	_hqObject globalChat format ["%1: %2, %3 is already engaged, wait out.",_airCallsign,(group _callingObject),_airCallsign];
+};
+
 [_callingObject,"NilVars"] call SEN_fnc_senMain;
 
 //Check air unit has ammo available
@@ -18,6 +23,7 @@ if (!_ammoAvailable) exitWith {
 	hint format ["%1 ordnance expended.",_airCallsign]
 };
 
+hint "Select ordnance for strike request.";
 
 //Select ammo
 //=======================================================================//
@@ -46,15 +52,10 @@ _callingObject globalChat format ["%1, this is %2, requesting immediate CAS, ove
 //Natural pause for reply
 sleep (1 +(random 1));
 
-//Check if aircraft is already engaging and exit if so
-if (missionNameSpace getVariable ["INC_sentinelEngaging",false]) exitWith {
-	_hqObject globalChat format ["%1: %2, %3 is already engaged, wait out.",_airCallsign,(group _callingObject),_airCallsign];
-	[_callingObject,"AbortStrike"] call SEN_fnc_senMain;
-};
-
 //Prevent further attempts
 missionNameSpace setVariable ["INC_sentinelEngaging", true, true];
 
+sleep 3;
 
 _hqObject globalChat format ["%1: %2, this is %3, roger, send 9-liner.",_airCallsign,(group _callingObject),_airCallsign];
 
@@ -65,7 +66,7 @@ _hqObject globalChat format ["%1: %2, this is %3, roger, send 9-liner.",_airCall
 
 //Hold until choice made
 waitUntil {
-	sleep 0.5;
+	sleep 2;
 	(_callingObject getVariable ["INC_stageProceed",false])
 };
 _callingObject setVariable ["INC_stageProceed",false];
@@ -84,6 +85,8 @@ if (_callingObject getVariable ["INC_abortStrike",false]) exitWith {
 sleep 1;
 _callingObject globalChat format ["Type 2 control by %1, 1 through 3 N/A, targets in the open, grid %2.",(group _callingObject),(mapGridPosition _callingObject)];
 
+
+sleep 4;
 
 //Execute relevant script
 switch (_callingObject getVariable ["INC_markType","laser"]) do {
