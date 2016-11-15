@@ -12,7 +12,7 @@ if (!_repeat) then {
 
 	_callingObject globalChat format ["Marking target with laser, friendlies at grid %1. Standby for target mark.",(mapGridPosition _callingObject)];
 
-	sleep (1 + (random 2));
+	sleep (2 + (random 4));
 
 	_hqObject globalChat format ["%1: Roger, scanning for sparkle.",_airCallsign];
 };
@@ -23,7 +23,7 @@ if (!_repeat) then {
 
 //Hold until choice made
 waitUntil {
-	sleep 2;
+	sleep 0.5;
 	(_callingObject getVariable ["INC_stageProceed",false]);
 };
 _callingObject setVariable ["INC_stageProceed",false];
@@ -31,7 +31,7 @@ _callingObject setVariable ["INC_stageProceed",false];
 //Abort option
 if (_callingObject getVariable ["INC_abortStrike",false]) exitWith {
 	sleep 0.2;
-	_callingObject globalChat "Abort.";
+	_callingObject globalChat "Abort CAS mission.";
 	sleep 1;
 	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
 	[_callingObject,"AbortStrike"] call SEN_fnc_senMain;
@@ -55,7 +55,7 @@ if (_nearLaserArray isEqualTo []) then {
 
 //Restart script if no lasers found
 if (_nearLaserArray isEqualTo []) exitWith {
-	sleep (0.5 + (random 1));
+	sleep (2 + (random 1));
 	_hqObject globalChat format ["%1: No joy, confirm laser active.",_airCallsign];
 	sleep 2;
 	[[_callingObject,_hqObject,true], 'Sentinel\scripts\laserNew.sqf'] remoteExec ['execVM',player];
@@ -84,15 +84,22 @@ _stickyTargetActive = false;
 
 _stickyTarget = [_callingObject,"StickyTarget",[_primaryTarget]] call SEN_fnc_senMain;
 
+sleep 2;
+
 //If there's a sticky target present, give option to target that instead and update default target pos if so
 if (typeName _stickyTarget == "OBJECT") then {
 
 	if (_stickyTarget isKindOf "Man") then {
 
-		_hqObject globalChat format ["%1: Tally infantry near laser mark, comfirm target.",_airCallsign];
+		_hqObject globalChat format ["%1: Tally infantry near target marker, confirm target.",_airCallsign];
 	} else {
+		if (_stickyTarget isKindOf "Tank") then {
 
-		_hqObject globalChat format ["%1: Tally vehicle near laser mark, comfirm target.",_airCallsign];
+			_hqObject globalChat format ["%1: Tally armour near target marker, confirm target.",_airCallsign];
+		} else {
+
+			_hqObject globalChat format ["%1: Tally vehicle near target marker, confirm target.",_airCallsign];
+		};
 	};
 
 	[_callingObject,"StickyTargetSelect"] call SEN_fnc_actionHandler;
@@ -145,7 +152,7 @@ if (typeName _stickyTarget == "OBJECT") then {
 if (_callingObject getVariable ["INC_abortStrike",false]) exitWith {
 	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
 	sleep 0.2;
-	_callingObject globalChat "Abort.";
+	_callingObject globalChat "Abort CAS mission.";
 	sleep 1;
 	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
 	[_callingObject,"AbortStrike"] call SEN_fnc_senMain;
@@ -205,7 +212,7 @@ if (_cdePass) then {
 //Abort option
 if (_callingObject getVariable ["INC_abortStrike",false]) exitWith {
 	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
-	_callingObject globalChat "Abort.";
+	_callingObject globalChat "Abort CAS mission.";
 	sleep 1;
 	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
 	[_callingObject,"AbortStrike",[_secondaryTarget]] call SEN_fnc_senMain;
@@ -215,19 +222,20 @@ if (_callingObject getVariable ["INC_abortStrike",false]) exitWith {
 if (_callingObject getVariable ["INC_multiTarget",false]) exitWith {
 	_callingObject globalChat "Marking additional target.";
 	_callingObject setVariable ["INC_multiTarget",false];
-	sleep 1;
+	sleep 2;
 	_hqObject globalChat format ["%1: Roger, confirm when ready.",_airCallsign];
 	[[_callingObject,_hqObject,true,true], 'Sentinel\scripts\markLaser.sqf'] remoteExec ['execVM',player];
 };
 
 //Continuing if no additional target requested, otherwise script restarts with previous secondary target saved in object var "SEN_targetArray"
 //=======================================================================//
+sleep 3;
 
-
-_callingObject globalChat ["Restrictions per ROE. Ground commander's intent is to destroy marked targets with %1.",(_callingObject getVariable ["INC_ammoType","missile"])];
+_callingObject globalChat format ["Restrictions per ROE. Ground commander's intent is to destroy marked targets with %1.",(_callingObject getVariable ["INC_ammoType","missile"])];
 
 if !(_stickyTargetActive) then {
-	[_callingObject,_primaryTarget] spawn {
+	[_callingObject,_primaryTarget,_defaultTargetPos] spawn {
+		params ["_callingObject","_primaryTarget","_defaultTargetPos"];
 		waitUntil {
 			sleep 4;
 
@@ -236,12 +244,17 @@ if !(_stickyTargetActive) then {
 				_primaryTarget setPosWorld (getPosWorld laserTarget _callingObject);
 			};
 
+			while {!alive (laserTarget _callingObject)} do {
+				if (_defaultTargetPos isEqualType []) then {_primaryTarget setPosATL _defaultTargetPos};
+				sleep 1;
+			};
+
 			(!alive _primaryTarget)
 		};
 	};
 };
 
-sleep 1;
+sleep 5;
 
 _hqObject globalChat format ["%1: Roger, restrictions per ROE. Conducting collateral damage assessment, standby.",_airCallsign];
 
@@ -255,7 +268,7 @@ sleep (3 + (random 2));
 
 //Abort option
 if (_callingObject getVariable ["INC_abortStrike",false]) exitWith {
-	_callingObject globalChat "Abort.";
+	_callingObject globalChat "Abort CAS mission.";
 	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
 	sleep 1;
 	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
@@ -266,7 +279,7 @@ sleep (3 + (random 5));
 
 //Abort option
 if (_callingObject getVariable ["INC_abortStrike",false]) exitWith {
-	_callingObject globalChat "Abort.";
+	_callingObject globalChat "Abort CAS mission.";
 	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
 	sleep 1;
 	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
@@ -288,7 +301,7 @@ if (!_cdePass) exitWith {
 //Abort option
 if (_callingObject getVariable ["INC_abortStrike",false]) exitWith {
 	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
-	_callingObject globalChat "Abort.";
+	_callingObject globalChat "Abort CAS mission.";
 	sleep 1;
 	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
 	[_callingObject,"AbortStrike",[_secondaryTarget]] call SEN_fnc_senMain;
@@ -310,7 +323,7 @@ _callingObject setVariable ["INC_stageProceed",false];
 //Abort option
 if (_callingObject getVariable ["INC_abortStrike",false]) exitWith {
 	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
-	_callingObject globalChat "Abort.";
+	_callingObject globalChat "Abort CAS mission.";
 	sleep 1;
 	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
 	[_callingObject,"AbortStrike",[_secondaryTarget]] call SEN_fnc_senMain;

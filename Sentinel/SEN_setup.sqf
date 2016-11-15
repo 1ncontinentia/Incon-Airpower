@@ -24,18 +24,18 @@ private ["_playeTimeVar","_playTime","_percentage","_hqCallsign","_airCallsign",
 //General Options
 _percentage = 100;
 _hqCallsign = "DARK HORSE";
-_airCallsign = "GRENDEL ONE-FOUR";
+_airCallsign = "Grendel 1-4";
 _nightTimeOnly = false;
 _dawn = 5;
 _dusk = 19;
 
 
 //Aicraft options
-_aircraftType = "RQ-170 Sentinel";      //Aircraft type (for voice procedure, does not change anything about strike)
+_aircraftType = "RQ-170 Sentinel RPA";      //Aircraft type (for voice procedure, does not change anything about strike)
 _minTimeOnTgt = 2;                      //How long should the aircraft take to reach the AO in seconds
 _randomDelay = 3;                       //Random delay factor (could be delayed by up to this many seconds)
-_altitudeMin = 5000;                    //Minimum altitude of ordnance launch
-_altitudeRandom = 1000;                 //Random additional altitude above minimum for ordnance launch
+_altitudeMin = 8000;                    //Minimum altitude of ordnance launch
+_altitudeRandom = 4000;                 //Random additional altitude above minimum for ordnance launch
 _radius = 1500;                         //Radius of launch position around player in meters
 _rtbOnNoAmmo = false; 					//Should the unit RTB when out of ammo?
 _playTime = 60;                         //Amount of time aircraft will remain on station (in minutes)

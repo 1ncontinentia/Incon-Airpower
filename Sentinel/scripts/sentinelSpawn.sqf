@@ -33,6 +33,8 @@ hqObject = _HQLogicGrp createUnit [
     "NONE"
 ];
 
+_hqObject = hqObject;
+
 _caller globalChat format ["%1, this is %2, requesting air cover at GRID %3, over.",_hqCallsign,(group _caller),(mapGridPosition _caller)];
 
 sleep 1;
@@ -62,21 +64,21 @@ if (!(compromised) && (_percentage > (random 100)) && ((!_nightTimeOnly) || (day
 
 	sleep _sentinelETA;
 
-    private _timeOnTarget = ((_playTime * 60) + ((random _playeTimeVar) - (random _playeTimeVar) * 60));
+    private _timeOnTarget = ((_playTime + (random _playeTimeVar) - (random _playeTimeVar)) * 60);
 
     //Initial contact with air
     _hqObject globalChat format ["%1: %2, this is %3.",_airCallsign,(group _caller),_airCallsign];
 
-    sleep 1;
+    sleep (4 + (random 4));
 
     //Request auth
-    _caller globalChat format ["%1, %2, send traffic.",_airCallsign,(group _caller)];
+    _caller globalChat format ["%1, %2. Send traffic.",_airCallsign,(group _caller)];
 
-    sleep 1;
+    sleep (4 + (random 8));
 
     if (_trackingEnabled) then {
 
-    	hqObject globalChat format ["%1: %2 is at the Charlie Papa and initiating tracking. Advise when ready to authenticate.",_hqCallsign,_airCallsign];
+    	hqObject globalChat format ["%1: %2 is at the Charlie Papa and initiating tracking. Advise when ready to authenticate.",_airCallsign,_airCallsign];
 
     	missionNamespace setVariable ["INC_sentinelTracking", true, true];
 
@@ -91,45 +93,45 @@ if (!(compromised) && (_percentage > (random 100)) && ((!_nightTimeOnly) || (day
     	_auth
     };
 
-    sleep 1;
+    sleep (6 + (random 5));
 
     //Request auth
-    _caller globalChat format ["%1, %2, roger, ready authentication, over.",_airCallsign,(group _caller)];
+    _caller globalChat format ["%1, %2, roger, ready authentication.",_airCallsign,(group _caller)];
 
-    sleep 1;
+    sleep (4 + (random 4));
 
     //Aircraft responds with authentication
-    _hqObject globalChat format ["%1: Wilco, authenticate %3 %4.",_airCallsign,_airCallsign,(call _authKey),(call _authKey)];
+    _hqObject globalChat format ["%1: Authenticate %3 %4.",_airCallsign,_airCallsign,(call _authKey),(call _authKey)];
 
-    sleep 1.7;
+    sleep (4 + (random 4));
 
     //FAC responds and authenticates
     _caller globalChat format ["%1 comes back %2. Authenticate %3 %4.",(group _caller),(call _authKey),(call _authKey),(call _authKey)];
 
-    sleep 1.2;
+    sleep (4 + (random 4));
 
     //Aircraft final auth
-    _hqObject globalChat format ["%1 comes back %2.",_airCallsign,(call _authKey)];
+    _hqObject globalChat format ["%1: %2 comes back %3.",_airCallsign,_airCallsign,(call _authKey)];
 
-    sleep 1;
+    sleep (4 + (random 4));
 
     //FAC good auth
-    _caller globalChat format ["%1: Good authentication, send line-up %2.",(group _caller),_airCallsign];
+    _caller globalChat format ["Good authentication, send line-up %1.",_airCallsign];
 
-    sleep 1;
+    sleep (8 + (random 6));
 
     //Lineup
     _hqObject globalChat format ["%1: %2 is mission number %3, 1 %4 at base plus %5.",_airCallsign,_airCallsign,(round (random 1000)),_aircraftType,(round random (_altitudeRandom/1000))];
 
-    sleep 0.2;
+    sleep (8 + (random 6));
 
     //Otherwise, say how many missiles remaining
-    _hqObject globalChat format ["%1: Equipped with %2 LGB, %3 LGM. Playtime %4, abort in the clear.",_airCallsign,_bomb,_missile,_timeOnTarget];
+    _hqObject globalChat format ["%1: Equipped with %2 GBU-12 LGB and %3 Hellfire LGM. Playtime %4, abort in the clear.",_airCallsign,_bomb,_missile,(round (_timeOnTarget/60))];
 
-    sleep 2;
+    sleep 8;
 
     //FAC good auth
-    _caller globalChat format ["%1: Copy abort in the clear. You've got base plus %2. %3 will call for CAS on radio Charlie if required.",(group _caller),(round (_altitudeRandom/1000)),(group _caller)];
+    _caller globalChat format ["%1: Roger, abort in the clear. You've got base plus %2. %3 will call for CAS on radio Charlie if required. Out.",(group _caller),(round (_altitudeRandom/1000)),(group _caller)];
 
 	[_caller,hqObject,_bomb,_missile] spawn {
         params [["_caller",player],["_hqObject",hqObject],"_bomb","_missile"];
@@ -152,7 +154,7 @@ if (!(compromised) && (_percentage > (random 100)) && ((!_nightTimeOnly) || (day
 		4 setRadioMsg _radioMessage;
 	};
 
-	sleep (3600 + (random 600));
+	sleep _timeOnTarget;
 
 	if (isNil "INC_airMissionComplete") then {
 		hqObject globalChat format ["%1: %2 is bingo, happy hunting.",_airCallsign,_airCallsign];
