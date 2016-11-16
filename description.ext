@@ -2,7 +2,7 @@
 
 class CfgFunctions
 {
-	#include "Sentinel\cfgFunctions.hpp"
+	#include "INC_airPower\cfgFunctions.hpp"
 };
 
 class CfgRemoteExec
@@ -11,6 +11,6 @@ class CfgRemoteExec
    {
        mode = 2;
        jip = 1;
-       #include "Sentinel\functionsWhitelist.hpp"
+       #include "INC_airPower\functionsWhitelist.hpp"
    };
 };

@@ -1,4 +1,4 @@
 
-class senMain;
+class APWMain;
 class actionHandler;
 class weaponRelease;
