@@ -6,7 +6,7 @@ The aicraft itself is not spawned, only simulated.
 Ideal for single player and low-player-count COOP (lots of players using tracking may cause considerable server lag). 
 
 
-Features:
+### Features:
 
 * Optional unit tracking on map, with accuracy that degrades with overhead cover, weather etc. (only shows targets that would be visible from overhead).
 * Call in guided airstrikes with the radio menu. 
