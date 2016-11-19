@@ -96,11 +96,13 @@ waitUntil {
 							_m setMarkerColorLocal "ColorWhite";
 						};
 						case resistance;
-						case east: {
-							_m setMarkerColorLocal "ColorPink";
-						};
+						case east;
 						case west: {
-							_m setMarkerColorLocal "colorBLUFOR";
+							if (side _x != _friendlySide) then {
+								_m setMarkerColorLocal "ColorPink";
+							} else {
+								_m setMarkerColorLocal "colorBLUFOR";
+							}; 
 						};
 					};
 				};
