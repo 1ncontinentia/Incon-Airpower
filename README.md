@@ -31,9 +31,10 @@ Ideal for single player and low-player-count COOP (lots of players using trackin
 
 1. Place "INC_airpower" folder into your mission root folder. 
 2. If you have no description.ext, place that into your mission root folder too. Otherwise, add the lines from this file into your mission's description.ext. 
-3. Open the "APW_setup.sqf" file and configure the settings to your liking. 
+3. Open the "INC_airpower\APW_setup.sqf" file and configure the settings to your liking. 
 4. In the init of the object you want players to call air support from (including players themselves), write:
 
-    this addaction ["Request air support","INC_airpower\scripts\airpowerSpawn.sqf",[],1,false,true,"","!(missionNamespace getVariable ['APW_airAssetRequested',false])"];
+```this addaction ["Request air support","INC_airpower\scripts\airpowerSpawn.sqf",[],1,false,true,"","!(missionNamespace getVariable ['APW_airAssetRequested',false])"];```
 
-5. Call air support using radio Charlie. 
+
+Call air support using radio Charlie once it has been requested. 
