@@ -6,10 +6,18 @@ private ["_ammoAvailable","_airpowerLaser","_tgt","_speed","_seconds","_ammo","_
 
 if (!local _callingObject) exitWith {};
 
+if !(_necItem in (assignedItems _callingObject)) exitWith {hint "You are missing the required communication device."};
+
+_callingObject globalChat format ["%1, this is %2, standby for strike request.",_airCallsign,(group _callingObject)];
+
 //Check if aircraft is already engaging and exit if so
 if (missionNameSpace getVariable ["APW_airpowerEngaging",false]) exitWith {
+	sleep 2; 
 	_hqObject globalChat format ["%1: %2, %3 is already engaged, wait out.",_airCallsign,(group _callingObject),_airCallsign];
 };
+
+//Prevent further attempts
+missionNameSpace setVariable ["APW_airpowerEngaging", true, true];
 
 [_callingObject,"NilVars"] call APW_fnc_APWMain;
 
@@ -51,9 +59,6 @@ _callingObject globalChat format ["%1, this is %2, requesting immediate CAS, ove
 
 //Natural pause for reply
 sleep (1 +(random 1));
-
-//Prevent further attempts
-missionNameSpace setVariable ["APW_airpowerEngaging", true, true];
 
 sleep 3;
 
