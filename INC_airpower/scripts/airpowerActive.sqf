@@ -8,11 +8,11 @@ if (!local _callingObject) exitWith {};
 
 if !(_necItem in (assignedItems _callingObject)) exitWith {hint "You are missing the required communication device."};
 
-_callingObject globalChat format ["%1, this is %2, standby for strike request.",_airCallsign,(group _callingObject)];
+if (_fullVP) then {_callingObject globalChat format ["%1, this is %2, standby for strike request.",_airCallsign,(group _callingObject)]};
 
 //Check if aircraft is already engaging and exit if so
 if (missionNameSpace getVariable ["APW_airpowerEngaging",false]) exitWith {
-	sleep 2; 
+	sleep 2;
 	_hqObject globalChat format ["%1: %2, %3 is already engaged, wait out.",_airCallsign,(group _callingObject),_airCallsign];
 };
 
@@ -55,14 +55,16 @@ if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
 //Strike ordnace now selected and stored in _callingObject getVariable ["APW_ammoType","missile"]; options are "bomb" or "missile".
 //Ammo selected, puts in request for bomb / missile strike with aircraft
 
-_callingObject globalChat format ["%1, this is %2, requesting immediate CAS, over.",_airCallsign,(group _callingObject)];
+if (_fullVP) then {
+	_callingObject globalChat format ["%1, this is %2, requesting immediate CAS, over.",_airCallsign,(group _callingObject)];
 
-//Natural pause for reply
-sleep (1 +(random 1));
+	//Natural pause for reply
+	sleep (1 +(random 1));
 
-sleep 3;
+	sleep 3;
 
-_hqObject globalChat format ["%1: %2, this is %3, roger, send 9-liner.",_airCallsign,(group _callingObject),_airCallsign];
+	_hqObject globalChat format ["%1: %2, this is %3, roger, send 9-liner.",_airCallsign,(group _callingObject),_airCallsign];
+};
 
 
 //Select target marker
@@ -80,7 +82,7 @@ _callingObject setVariable ["APW_stageProceed",false];
 //Abort option
 if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
 	sleep 0.5;
-	_callingObject globalChat "Cancel my last.";
+	if (_fullVP) then {_callingObject globalChat "Cancel my last."};
 	sleep 1;
 	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
 
@@ -88,7 +90,7 @@ if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
 };
 //=======================================================================//
 sleep 1;
-_callingObject globalChat format ["Type 2 control by %1, 1 through 3 N/A, targets in the open, grid %2.",(group _callingObject),(mapGridPosition _callingObject)];
+if (_fullVP) then {_callingObject globalChat format ["Type 2 control by %1, 1 through 3 N/A, targets in the open, grid %2.",(group _callingObject),(mapGridPosition _callingObject)]};
 
 
 sleep 4;

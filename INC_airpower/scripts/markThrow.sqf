@@ -55,7 +55,7 @@ _markerColourLwr = (toLower _markerColour);
 
 sleep (1 + (random 2));
 
-_hqObject globalChat format ["%1: Roger, scanning.",_airCallsign];
+if (_fullVP) then {_hqObject globalChat format ["%1: Roger, scanning.",_airCallsign]};
 
 sleep 1;
 
@@ -68,7 +68,7 @@ if (_nearbyThrowArray isEqualTo []) then {
 
 	//Repeat search again if nothing seen
 	if (_nearbyThrowArray isEqualTo []) then {
-		sleep (3 + (random 2));
+		sleep (5 + (random 2));
 		_nearbyThrowArray = [_callingObject,"FindThrowMarker"] call APW_fnc_APWMain;
 	};
 };
@@ -129,15 +129,15 @@ if (typeName _stickyTarget == "OBJECT") then {
 
 		if (_stickyTarget isKindOf "Man") then {
 
-			_callingObject globalChat "Target is infantry in the open.";
+			if (_fullVP) then {_callingObject globalChat "Target is infantry in the open."};
 		} else {
 
 			if (_stickyTarget isKindOf "Tank") then {
 
-				_callingObject globalChat "Target is armour in the open.";
+				if (_fullVP) then {_callingObject globalChat "Target is armour in the open."};
 			} else {
 
-				_callingObject globalChat "Target is vehicle in the open.";
+				if (_fullVP) then {_callingObject globalChat "Target is vehicle in the open."};
 			};
 		};
 
@@ -147,7 +147,7 @@ if (typeName _stickyTarget == "OBJECT") then {
 		_defaultTargetPos = [(getPosATL _primaryTarget select 0) + (random 5), (getPosATL _primaryTarget select 1) + (random 5),(getPosATL _primaryTarget select 2) + 2];
 	} else {
 
-		_callingObject globalChat "Engage my mark.";
+		if (_fullVP) then {_callingObject globalChat "Engage my mark."};
 
 		sleep 1.5;
 
@@ -178,63 +178,69 @@ _primaryTarget = _secondaryTarget;
 
 sleep 4;
 
-_callingObject globalChat format ["Restrictions per ROE. Ground commander's intent is to destroy marked target with %1.",(_callingObject getVariable ["APW_ammoType","missile"])];
+if (_fullVP) then {_callingObject globalChat format ["Restrictions per ROE. Ground commander's intent is to destroy marked target with %1.",(_callingObject getVariable ["APW_ammoType","missile"])]};
 
 
 sleep 5;
 
-_hqObject globalChat format ["%1: Roger, restrictions per ROE. Conducting collateral damage assessment.",_airCallsign];
+if (_preStrikeCDE) then {
 
-//=======================================================================//
+	_hqObject globalChat format ["%1: Roger, restrictions per ROE. Conducting collateral damage assessment.",_airCallsign];
 
-//Abort action
-_abortAction = [_callingObject,"AbortOption"] call APW_fnc_actionHandler;
+	//=======================================================================//
 
-sleep (3 + (random 2));
+	//Abort action
+	_abortAction = [_callingObject,"AbortOption"] call APW_fnc_actionHandler;
+
+	sleep (3 + (random 2));
 
 
-//Abort option
-if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
-	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
-	_callingObject globalChat "Abort CAS mission.";
-	sleep 1;
-	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
-	[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
+	//Abort option
+	if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
+		if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
+		_callingObject globalChat "Abort CAS mission.";
+		sleep 1;
+		_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
+		[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
+	};
+
+	sleep (3 + (random 5));
+
+	//Abort option
+	if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
+		if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
+		_callingObject globalChat "Abort CAS mission.";
+		sleep 1;
+		_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
+		[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
+	};
+
+	_callingObject removeAction _abortAction;
+
+	_cdePass = [_callingObject,"DamageEstimateFeedback",[_primaryTarget,_hqObject]] call APW_fnc_APWMain;
+
+	//Fail CDE exit
+	if (!_cdePass) exitWith {
+		if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
+		sleep (1 + (random 1));
+		_hqObject globalChat format ["%1: Designated target does not fit within ROE. %1 is disengaging.",_airCallsign,_airCallsign];
+		[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
+	};
+
+	//Abort option
+	if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
+		if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
+		_callingObject globalChat "Abort CAS mission.";
+		sleep 1;
+		_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
+		[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
+	};
+
+	_hqObject globalChat format ["%1: CDE complete, ready to engage.",_airCallsign];
+
+} else {
+	_hqObject globalChat format ["%1: Ready to engage.",_airCallsign];
 };
-
-sleep (3 + (random 5));
-
-//Abort option
-if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
-	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
-	_callingObject globalChat "Abort CAS mission.";
-	sleep 1;
-	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
-	[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
-};
-
-_callingObject removeAction _abortAction;
-
-_cdePass = [_callingObject,"DamageEstimateFeedback",[_primaryTarget,_hqObject]] call APW_fnc_APWMain;
-
-//Fail CDE exit
-if (!_cdePass) exitWith {
-	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
-	sleep (1 + (random 1));
-	_hqObject globalChat format ["%1: Designated target does not fit within ROE. %1 is disengaging.",_airCallsign,_airCallsign];
-	[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
-};
-
-//Abort option
-if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
-	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
-	_callingObject globalChat "Abort CAS mission.";
-	sleep 1;
-	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
-	[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
-};
-
-_hqObject globalChat format ["%1: CDE complete, ready to engage.",_airCallsign];
 
 sleep (1 + (random 1));
 
