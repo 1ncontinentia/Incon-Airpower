@@ -9,6 +9,7 @@ Ideal for single player and low-player-count COOP (lots of players using trackin
 ### Features:
 
 * Optional unit tracking on map, with accuracy that degrades with overhead cover, weather etc. (only shows targets that would be visible from overhead). 
+ - (optional) restrict to units with UAV terminal only
  - differentiates between friendlies (blue), unarmed infantry (white), armed infantry (pink), civilian vehicles (white, large) and non-friendly vehicles (pink, large). 
 * Call in guided airstrikes with the radio menu. 
 * Mark targets with laser, smoke, chemlights or IR strobes (night only for chemlights and strobes). 
