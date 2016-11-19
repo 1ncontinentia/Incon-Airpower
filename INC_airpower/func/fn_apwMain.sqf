@@ -295,7 +295,7 @@ switch (_operation) do {
 
 	case "DamageEstimate": {
 
-		_args params ["_primaryTarget","_hqObject",["_killRadius",35],["_distFromHVT",150]];
+		_args params ["_primaryTarget","_hqObject",["_killRadius",35],["_distFromSensitive",150]];
 
 		private _nearbyFriendlies = [];
 		private _nearbyCollateral = [];
@@ -325,21 +325,21 @@ switch (_operation) do {
 			_return = false;
 		};
 
-		//Find HVTs
+		//Find sensitive
 		{
-			if ((_x getVariable ["APW_sensetiveTarget",false]) || {(_x getVariable ["isSuperHVT",false])}) then {
+			if (_x getVariable ["APW_sensetiveTarget",false]) then {
 				_nearbySensitive pushBack _x;
 			};
-		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "Car", "Motorcycle", "Tank"], _distFromHVT]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
+		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "Car", "Motorcycle", "Tank"], _distFromSensitive]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
 
-		if ((count _nearbySensitive != 0) && {!(_targetHVTs)}) exitWith {
+		if ((count _nearbySensitive != 0) && {!(_allowSensitive)}) exitWith {
 			_return = false;
 		};
 	};
 
 	case "DamageEstimateFeedback": {
 
-		_args params ["_primaryTarget","_hqObject",["_killRadius",35],["_distFromHVT",150]];
+		_args params ["_primaryTarget","_hqObject",["_killRadius",35],["_distFromSensitive",150]];
 
 		private _nearbyFriendlies = [];
 		private _nearbyCollateral = [];
@@ -379,14 +379,14 @@ switch (_operation) do {
 			_return = false;
 		};
 
-		//Find HVTs
+		//Find sensitive
 		{
-			if ((_x getVariable ["APW_sensetiveTarget",false]) || {(_x getVariable ["isSuperHVT",false])}) then {
+			if (_x getVariable ["APW_sensetiveTarget",false]) then {
 				_nearbySensitive pushBack _x;
 			};
-		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "Car", "Motorcycle", "Tank"], _distFromHVT]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
+		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "Car", "Motorcycle", "Tank"], _distFromSensitive]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
 
-		if ((count _nearbySensitive != 0) && {!(_targetHVTs)}) exitWith {
+		if ((count _nearbySensitive != 0) && {!(_allowSensitive)}) exitWith {
 			_hqObject globalChat format ["%1: Be advised, there are sensitive targets in the AO.",_airCallsign];
 			_return = false;
 		};
