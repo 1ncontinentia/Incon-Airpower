@@ -6,7 +6,7 @@ Author: Incontinentia
 
 */
 
-private ["_playeTimeVar","_playTime","_percentage","_hqCallsign","_airCallsign","_nightTimeOnly","_dawn","_dusk","_aircraftType","_minTimeOnTgt","_randomDelay","_altitudeMin","_altitudeRandom","_radius","_speed","_ammoArray","_allowSensitive","_maxCollateral","_sideFriendly","_trackingEnabled","_percentageReliability","_isAffectedByOvercast","_objectOcclusion","_maxOvercastDegradation","_trackingRange","_terminalNecessary","_friendlySide"];
+private ["_necItem","_fullVP","_preStrikeCDE","_playeTimeVar","_playTime","_percentage","_hqCallsign","_airCallsign","_nightTimeOnly","_dawn","_dusk","_aircraftType","_minTimeOnTgt","_randomDelay","_altitudeMin","_altitudeRandom","_radius","_speed","_ammoArray","_allowSensitive","_maxCollateral","_sideFriendly","_trackingEnabled","_percentageReliability","_isAffectedByOvercast","_objectOcclusion","_maxOvercastDegradation","_trackingRange","_terminalNecessary","_friendlySide"];
 
 //General Options
 _percentage = 100;
@@ -18,7 +18,8 @@ _dusk = 19;
 
 //Player options
 _necItem = "B_UavTerminal";             //Required item to call for air support.
-
+_fullVP = true;                         //Should JTAC and pilot use full voice procedure or limit radio contact to essential only?
+_preStrikeCDE = true;                   //Should the pilot conduct a collateral damage assessment before the strike? (Check for civilians, nearby friendlies, sensitive targets in strike radius)
 
 //Aicraft options
 _aircraftType = "RQ-170 Sentinel RPA";  //Aircraft type (for voice procedure, does not change anything about strike)
