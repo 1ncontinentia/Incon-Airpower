@@ -6,7 +6,7 @@ Author: Incontinentia
 
 */
 
-private ["_playeTimeVar","_playTime","_percentage","_hqCallsign","_airCallsign","_nightTimeOnly","_dawn","_dusk","_aircraftType","_minTimeOnTgt","_randomDelay","_altitudeMin","_altitudeRandom","_radius","_speed","_ammoArray","_targetHVTs","_maxCollateral","_sideFriendly","_trackingEnabled","_percentageReliability","_isAffectedByOvercast","_objectOcclusion","_maxOvercastDegradation","_trackingRange","_terminalNecessary","_friendlySide"];
+private ["_playeTimeVar","_playTime","_percentage","_hqCallsign","_airCallsign","_nightTimeOnly","_dawn","_dusk","_aircraftType","_minTimeOnTgt","_randomDelay","_altitudeMin","_altitudeRandom","_radius","_speed","_ammoArray","_allowSensitive","_maxCollateral","_sideFriendly","_trackingEnabled","_percentageReliability","_isAffectedByOvercast","_objectOcclusion","_maxOvercastDegradation","_trackingRange","_terminalNecessary","_friendlySide"];
 
 //General Options
 _percentage = 100;
@@ -16,9 +16,12 @@ _nightTimeOnly = false;
 _dawn = 5;
 _dusk = 19;
 
+//Player options
+_necItem = "B_UavTerminal";             //Required item to call for air support.
+
 
 //Aicraft options
-_aircraftType = "RQ-170 Sentinel RPA";      //Aircraft type (for voice procedure, does not change anything about strike)
+_aircraftType = "RQ-170 Sentinel RPA";  //Aircraft type (for voice procedure, does not change anything about strike)
 _minTimeOnTgt = 2;                      //How long should the aircraft take to reach the AO in seconds
 _randomDelay = 3;                       //Random delay factor (could be delayed by up to this many seconds)
 _altitudeMin = 8000;                    //Minimum altitude of ordnance launch
@@ -32,8 +35,8 @@ _playeTimeVar = 5;                      //Variation in minutes for time on stati
 _bomb = 2;							    //How many GBUs will the air unit carry?
 _missile = 4;                           //How many AT missiles the air unit carry?
 
-//Are HVTs legitimate targets (only applicable if using INC_killorcapture)
-_targetHVTs = false;
+//Allow targeting of sensetive targets (put "this setVariable ["APW_sensetiveTarget",true,true];" without quotation marks in the unit's init)
+_allowSensitive = false;
 
 //Mission aborted if more than this number of civilians are in the probable kill radius (only civilians visible from overhead will be counted, more may be present in reality)
 _maxCollateral = 1;
