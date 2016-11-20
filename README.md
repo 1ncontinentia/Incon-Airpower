@@ -5,6 +5,8 @@ Unlike other CAS scripts, Incon Airpower simulates high-altitude strikes where t
 The aicraft itself is not spawned, only simulated. 
 Ideal for single player and low-player-count COOP (lots of players using tracking may cause considerable server lag). 
 
+###### Requires CBA
+
 
 ### Features:
 
