@@ -112,11 +112,11 @@ waitUntil {
 
 			if (_reliability > (random 100)) then {
 
-				if (!(_objectOcclusion) && {(((str typeOf _x) find "Rabbit") == -1)}) exitWith {true};
+				if (!(_objectOcclusion) && {(((str typeOf _x) find "Rabbit") == -1)} && {(((str typeOf _x) find "Snake") == -1)} && {(((str typeOf _x) find "Bird") == -1)}) exitWith {true};
 
 				if ((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo []) then {
 
-					if (((str typeOf _x) find "Rabbit") == -1) then {
+					if ((((str typeOf _x) find "Rabbit") == -1) && {(((str typeOf _x) find "Snake") == -1)} && {(((str typeOf _x) find "Bird") == -1)}) then {
 						true
 					};
 				};

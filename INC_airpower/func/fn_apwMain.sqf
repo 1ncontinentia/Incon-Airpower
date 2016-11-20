@@ -363,7 +363,7 @@ switch (_operation) do {
 
 		//Find civilians
 		{
-			if ((side _x == civilian) && {(((str typeOf _x) find "Rabbit") == -1)}) then {
+			if ((side _x == civilian) && {(((str typeOf _x) find "Rabbit") == -1)} && {(((str typeOf _x) find "Snake") == -1)} && {(((str typeOf _x) find "Bird") == -1)}) then {
 				_nearbyCollateral pushBack _x;
 			};
 		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "Car", "Motorcycle", "Tank"], _killRadius]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
