@@ -195,14 +195,13 @@ switch (_operation) do {
 
 	case "StickyTarget": {
 
-		_args params ["_primaryTarget",["_radius",25]];
+		_args params ["_primaryTarget",["_radius",15]];
 
 		private ["_stickyTargetArray","_stickyTarget"];
 
 		_stickyTargetArray = (
 			((position _primaryTarget) nearEntities [["car","tank","helicopter","man"], _radius]) select {
-				((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo []) &&
-				{side _x != _sideFriendly}
+				(side _x != _sideFriendly)
 			}
 		);
 
@@ -223,8 +222,7 @@ switch (_operation) do {
 
 		_stickyTargetArray = (
 			((position _primaryTarget) nearEntities [["tank","helicopter","car"], _radius]) select {
-				((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo []) &&
-				{side _x != _sideFriendly} &&
+				(side _x != _sideFriendly) &&
 				{side _x != civilian}
 			}
 		);
