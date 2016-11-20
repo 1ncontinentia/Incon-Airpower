@@ -6,15 +6,15 @@ Author: Incontinentia
 
 */
 
-private ["_necItem","_fullVP","_preStrikeCDE","_playeTimeVar","_playTime","_percentage","_hqCallsign","_airCallsign","_nightTimeOnly","_dawn","_dusk","_aircraftType","_minTimeOnTgt","_randomDelay","_altitudeMin","_altitudeRandom","_radius","_speed","_ammoArray","_allowSensitive","_maxCollateral","_sideFriendly","_trackingEnabled","_percentageReliability","_isAffectedByOvercast","_objectOcclusion","_maxOvercastDegradation","_trackingRange","_terminalNecessary","_friendlySide"];
+private ["_necItem","_fullVP","_preStrikeCDE","_playeTimeVar","_playTime","_percentage","_hqCallsign","_airCallsign","_nightTimeOnly","_dawn","_dusk","_aircraftType","_minTimeOnTgt","_randomDelay","_altitudeMin","_altitudeRandom","_radius","_speed","_ammoArray","_allowSensitive","_maxCollateral","_sideFriendly","_trackingEnabled","_percentageReliability","_isAffectedByOvercast","_objectOcclusion","_maxOvercastDegradation","_trackingRange","_terminalNecessary"];
 
 //General Options
-_percentage = 100;
-_hqCallsign = "DARK HORSE";
-_airCallsign = "Grendel 1-4";
-_nightTimeOnly = false;
-_dawn = 5;
-_dusk = 19;
+_percentage = 100;                      //Percentage chance that the aircraft will be available for sorties
+_hqCallsign = "DARK HORSE";             //Callsign for HQ element
+_airCallsign = "Grendel 1-4";           //Aircraft callsign
+_nightTimeOnly = false;                 //Is activity limited to night-time only sorties?
+_dawn = 6;                              //Dawn time (before this time, the aircraft will look for chemlights / IR strobes) - 0-24
+_dusk = 18;                             //Dusk time (before this time, the aicraft will look for smoke) - 0-24
 
 //Player options
 _necItem = "B_UavTerminal";             //Required item to call for air support.
@@ -23,8 +23,8 @@ _preStrikeCDE = true;                   //Should the pilot conduct a collateral 
 
 //Aicraft options
 _aircraftType = "RQ-170 Sentinel RPA";  //Aircraft type (for voice procedure, does not change anything about strike)
-_minTimeOnTgt = 2;                      //How long should the aircraft take to reach the AO in seconds
-_randomDelay = 3;                       //Random delay factor (could be delayed by up to this many seconds)
+_minTimeOnTgt = 120;                    //How long should the aircraft take to reach the AO in seconds
+_randomDelay = 120;                     //Random delay factor (could be delayed by up to this many seconds)
 _altitudeMin = 8000;                    //Minimum altitude of ordnance launch
 _altitudeRandom = 4000;                 //Random additional altitude above minimum for ordnance launch
 _radius = 1500;                         //Radius of launch position around player in meters
@@ -36,7 +36,7 @@ _playeTimeVar = 5;                      //Variation in minutes for time on stati
 _bomb = 2;							    //How many GBUs will the air unit carry?
 _missile = 4;                           //How many AT missiles the air unit carry?
 
-//Allow targeting of sensetive targets (put "this setVariable ["APW_sensetiveTarget",true,true];" without quotation marks in the unit's init)
+//Allow targeting of sensetive targets (put "this setVariable ["APW_sensetiveTarget",true,true];" without quotation marks in the sensitive unit's init)
 _allowSensitive = false;
 
 //Mission aborted if more than this number of civilians are in the probable kill radius (only civilians visible from overhead will be counted, more may be present in reality)
@@ -45,14 +45,11 @@ _maxCollateral = 1;
 //Cancel strike if units of this side are in kill zone
 _sideFriendly = west;
 
-//Sensor options
+//Sensor / Tracking Options
 _trackingEnabled = true;                //Is tracking enabled? (If false, below settings are ignored)
 _percentageReliability = 98;			//What percentage of units will be picked up by tracking in perfect conditions?
 _isAffectedByOvercast = true;			//Is tracking affected by overcase conditions?
 _objectOcclusion = true;				//Do objects block tracking (i.e. a unit standing under a building)?
 _maxOvercastDegradation = 70;			//How much % reliability will be lost at full overcast?
 _trackingRange = 800;					//Maximum tracking range from player
-
-//Player sensor options
 _terminalNecessary = true;				//Is a UAV terminal necessary to view tracking information?
-_friendlySide = west;                   //Side of friendly units (will show blue markers)

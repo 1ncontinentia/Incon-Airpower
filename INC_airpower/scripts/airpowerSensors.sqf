@@ -65,7 +65,7 @@ waitUntil {
 
 				if !((currentWeapon _x == "") || (currentWeapon _x == "Throw")) then {
 
-					if (side _x != _friendlySide) then {
+					if (side _x != _sideFriendly) then {
 						_m setMarkerColorLocal "ColorPink";
 					} else {
 						_m setMarkerColorLocal "colorBLUFOR";
@@ -73,7 +73,7 @@ waitUntil {
 
 				} else {
 
-					if (side _x != _friendlySide) then {
+					if (side _x != _sideFriendly) then {
 						_m setMarkerColorLocal "ColorWhite";
 					} else {
 						_m setMarkerColorLocal "colorBLUFOR";
@@ -98,11 +98,11 @@ waitUntil {
 						case resistance;
 						case east;
 						case west: {
-							if (side _x != _friendlySide) then {
+							if (side _x != _sideFriendly) then {
 								_m setMarkerColorLocal "ColorPink";
 							} else {
 								_m setMarkerColorLocal "colorBLUFOR";
-							}; 
+							};
 						};
 					};
 				};
