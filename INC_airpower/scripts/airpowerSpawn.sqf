@@ -45,7 +45,7 @@ sleep 0.5;
 
 if (_fullVP) then {hqObject globalChat format ["%1: Request received, standby.",_hqCallsign]};
 
-if (!(compromised) && (_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= _dusk || daytime < _dawn))) exitWith {
+if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= _dusk || daytime < _dawn))) exitWith {
 
 	missionNamespace setVariable ["APW_airAssetRequested", true, true]; //Prevents multiple requests for aircraft
 
