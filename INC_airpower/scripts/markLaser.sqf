@@ -14,9 +14,7 @@ if (!_repeat) then {
 
 	if (_fullVP) then {_callingObject globalChat format ["Marking target with laser. Standby for confirmation.",(mapGridPosition _callingObject)]};
 
-	sleep (2 + (random 4));
-
-	_hqObject globalChat format ["%1: Roger, scanning for sparkle.",_airCallsign];
+	sleep (1 + (random 2));
 };
 
 //Confirm target marked action
