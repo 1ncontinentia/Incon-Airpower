@@ -201,7 +201,8 @@ switch (_operation) do {
 
 		_stickyTargetArray = (
 			((position _primaryTarget) nearEntities [["car","tank","helicopter","man"], _radius]) select {
-				(side _x != _sideFriendly)
+				(side _x != _sideFriendly) &&
+				{(!(_x isKindOf "Man") || {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])})}
 			}
 		);
 
@@ -223,7 +224,8 @@ switch (_operation) do {
 		_stickyTargetArray = (
 			((position _primaryTarget) nearEntities [["tank","helicopter","car"], _radius]) select {
 				(side _x != _sideFriendly) &&
-				{side _x != civilian}
+				{side _x != civilian} &&
+				{(!(_x isKindOf "Man") || {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])})}
 			}
 		);
 
@@ -236,7 +238,8 @@ switch (_operation) do {
 				((position _primaryTarget) nearEntities [["man"], _radius]) select {
 					((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo []) &&
 					{side _x != _sideFriendly} &&
-					{side _x != civilian}
+					{side _x != civilian} &&
+					{(!(_x isKindOf "Man") || {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])})}
 				}
 			);
 
