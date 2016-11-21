@@ -195,7 +195,7 @@ switch (_operation) do {
 
 	case "StickyTarget": {
 
-		_args params ["_primaryTarget",["_radius",15]];
+		_args params ["_primaryTarget",["_radius",10]];
 
 		private ["_stickyTargetArray","_stickyTarget"];
 
