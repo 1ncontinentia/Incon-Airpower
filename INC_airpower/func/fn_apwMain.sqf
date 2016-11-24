@@ -8,6 +8,14 @@ _return = false;
 
 switch (_operation) do {
 
+	case "createRadTrig": {
+	    APW_apSpwnTrig = createTrigger ["EmptyDetector", [0,0,0]];
+	    _triggerStatements = format ["[[player,player], 'INC_airpower\scripts\airpowerSpawn.sqf'] remoteExec ['execVM',player]"];
+	    APW_apSpwnTrig setTriggerActivation["ALPHA","PRESENT",true];
+	    APW_apSpwnTrig setTriggerStatements["this", _triggerStatements, ""];
+	    1 setRadioMsg "Request Air Cover" ;
+	};
+
 	case "NilVars": {
 
 		_callingObject setVariable ["APW_stageProceed",nil];

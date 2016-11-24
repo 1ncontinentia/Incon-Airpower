@@ -4,17 +4,20 @@ This script adds a request for a CAS aircraft (not physically spawned) which pro
 
 Author: Incontinentia
 
-Compromised variable.
-
 Called by radio trigger or addaction.
 
 Example:
 
 this addaction ["Request air support","INC_airpower\scripts\airpowerSpawn.sqf",[],1,false,true,"","!(missionNamespace getVariable ['APW_airAssetRequested',false])"];
 
+or if you want to use a radio trigger, call this in a unit's init (only one unit, radio trigger should work for all); 
+
+[player,"createRadTrig"] call APW_fnc_APWMain;
+
+
 */
 
-params ["_object", "_caller", "_id", "_args"];
+params [["_object",player], ["_caller",player], ["_id",""], ["_args",[]]];
 
 #include "..\APW_setup.sqf"
 
