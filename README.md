@@ -36,7 +36,7 @@ Ideal for single player and low-player-count COOP (lots of players using trackin
 3. Open the "INC_airpower\APW_setup.sqf" file and configure the settings to your liking.
 4. Decide how to call for air support.
 
-If you want players to call it using a specific object (like a laptop or something) then, in the init of the object you want players to call air support from (including players themselves), write:
+If you want players to call it using a specific object (like a laptop or something) then, in the init of the object, write:
 
 ```this addaction ["Request air support","INC_airpower\scripts\airpowerSpawn.sqf",[],1,false,true,"","!(missionNamespace getVariable ['APW_airAssetRequested',false])"];```
 
