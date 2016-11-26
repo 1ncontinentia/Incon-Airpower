@@ -42,10 +42,10 @@ If you want players to call it using a specific object (like a laptop or somethi
 
 If you want the player to call it from their action menu, in the playable unit's init, write:
 
-```player setVariable ["APW_initAddaction",true];```
+```this setVariable ["APW_initAddaction",true];```
 
 If you want the player to call it from a radio trigger (radio Alpha), in the playable unit's init, write:
 
-```player setVariable ["APW_initRadioTrig",true];```
+```this setVariable ["APW_initRadioTrig",true];```
 
 Call air support using radio Charlie once it has been requested.
