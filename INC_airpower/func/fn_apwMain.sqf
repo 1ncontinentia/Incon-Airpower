@@ -9,7 +9,7 @@ _return = false;
 switch (_operation) do {
 
 	case "createRadTrig": {
-	    APW_apSpwnTrig = createTrigger ["EmptyDetector", [0,0,0]];
+	    APW_apSpwnTrig = createTrigger ["EmptyDetector", [0,0,0], false];
 	    _triggerStatements = format ["[[player,player], 'INC_airpower\scripts\airpowerSpawn.sqf'] remoteExec ['execVM',player]"];
 	    APW_apSpwnTrig setTriggerActivation["ALPHA","PRESENT",true];
 	    APW_apSpwnTrig setTriggerStatements["this", _triggerStatements, ""];
