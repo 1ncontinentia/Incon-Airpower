@@ -26,7 +26,7 @@ private _i = 0;
 waitUntil {
 	sleep 1;
 	_i = (_i + 1);
-	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60))
+	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60) || (!alive _callingObject))
 };
 
 if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
@@ -118,7 +118,7 @@ if (typeName _stickyTarget == "OBJECT") then {
 	waitUntil {
 		sleep 1;
 		_i = (_i + 1);
-		((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60))
+		((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60) || (!alive _callingObject))
 	};
 
 	if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {};
@@ -157,6 +157,7 @@ if (typeName _stickyTarget == "OBJECT") then {
 	};
 } else {
 
+	_callingObject setVariable ["APW_stageProceed",true];
 	_hqObject globalChat format ["%1: Spot.",_airCallsign];
 };
 
@@ -213,7 +214,7 @@ private _i = 0;
 waitUntil {
 	sleep 1;
 	_i = (_i + 1);
-	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60))
+	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60) || (!alive _callingObject))
 };
 
 if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
@@ -362,7 +363,18 @@ private _i = 0;
 waitUntil {
 	sleep 1;
 	_i = (_i + 1);
-	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60))
+	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 120) || (!alive _callingObject))
+};
+
+if !(_callingObject getVariable ["APW_stageProceed",false]) then {
+	_hqObject globalChat format ["%1: Awaiting your confirmation.",_airCallsign];
+};
+
+private _i = 0;
+waitUntil {
+	sleep 1;
+	_i = (_i + 1);
+	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60) || (!alive _callingObject))
 };
 
 if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {

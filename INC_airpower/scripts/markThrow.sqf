@@ -34,7 +34,7 @@ private _i = 0;
 waitUntil {
 	sleep 1;
 	_i = (_i + 1);
-	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60))
+	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60) || (!alive _callingObject))
 };
 
 if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
@@ -132,7 +132,7 @@ if (typeName _stickyTarget == "OBJECT") then {
 	waitUntil {
 		sleep 1;
 		_i = (_i + 1);
-		((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60))
+		((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60) || (!alive _callingObject))
 	};
 
 	if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {};
@@ -161,6 +161,8 @@ if (typeName _stickyTarget == "OBJECT") then {
 		_stickyTargetActive = true;
 		_defaultTargetPos = [(getPosATL _primaryTarget select 0) + (random 5), (getPosATL _primaryTarget select 1) + (random 5),(getPosATL _primaryTarget select 2) + 2];
 	} else {
+
+		_callingObject setVariable ["APW_stageProceed",true];
 
 		if (_fullVP) then {_callingObject globalChat "Engage my mark."};
 
@@ -282,7 +284,18 @@ private _i = 0;
 waitUntil {
 	sleep 1;
 	_i = (_i + 1);
-	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60))
+	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 120) || (!alive _callingObject))
+};
+
+if !(_callingObject getVariable ["APW_stageProceed",false]) then {
+	_hqObject globalChat format ["%1: Awaiting your confirmation.",_airCallsign];
+};
+
+private _i = 0;
+waitUntil {
+	sleep 1;
+	_i = (_i + 1);
+	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60) || (!alive _callingObject))
 };
 
 if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
