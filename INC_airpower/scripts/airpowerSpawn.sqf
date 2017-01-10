@@ -10,7 +10,7 @@ Example:
 
 this addaction ["Request air support","INC_airpower\scripts\airpowerSpawn.sqf",[],1,false,true,"","!(missionNamespace getVariable ['APW_airAssetRequested',false])"];
 
-or if you want to use a radio trigger, call this in a unit's init (only one unit, radio trigger should work for all); 
+or if you want to use a radio trigger, call this in a unit's init (only one unit, radio trigger should work for all);
 
 [player,"createRadTrig"] call APW_fnc_APWMain;
 
@@ -33,8 +33,6 @@ hqObject = _HQLogicGrp createUnit [
 
 _hqObject = hqObject;
 
-if (_fullVP) then {};
-
 if (_fullVP) then {_caller globalChat format ["%1, this is %2, requesting air cover at GRID %3, over.",_hqCallsign,(group _caller),(mapGridPosition _caller)]};
 
 sleep 1;
@@ -48,15 +46,19 @@ sleep 0.5;
 
 if (_fullVP) then {hqObject globalChat format ["%1: Request received, standby.",_hqCallsign]};
 
-if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= _dusk || daytime < _dawn))) exitWith {
+if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= _dusk || daytime < _dawn)) && ((missionNamespace getVariable ["APW_sortiesLeft",_maxSorties]) > 0)) exitWith {
 
 	missionNamespace setVariable ["APW_airAssetRequested", true, true]; //Prevents multiple requests for aircraft
 
     missionNamespace setVariable ["APW_ammoArray",[_bomb,_missile]];
 
+    private _sortiesLeft = ((missionNamespace getVariable ["APW_sortiesLeft",_maxSorties]) -1);
+
+    missionNamespace setVariable ["APW_sortiesLeft",_sortiesLeft,true]; //Reduces the number of sorties left by 1
+
 	sleep (5 + (random 10));
 
-	_airpowerEta = (_minTimeOnTgt + (random _randomDelay));
+	private _airpowerEta = (_minTimeOnTgt + (random _randomDelay));
 
 	_airpowerEtaMins = round (_airpowerEta/60);
 
@@ -64,7 +66,16 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= _dusk || d
 
 	sleep _airpowerETA;
 
-    private _timeOnTarget = ((_playTime + (random _playeTimeVar) - (random _playeTimeVar)) * 60);
+    private _timeOnTarget = ((_playTime + (random _playeTimeVar) - (random (2 * _playeTimeVar))) * 60);
+
+    //Waits until sortie is complete then allows further aircraft calls (if there are enough sorties remaining)
+    if (_sortiesLeft > 0) then {
+        [_airpowerEta,_timeOnTarget] spawn {
+            params ["_airpowerEta","_timeOnTarget"];
+            sleep ((_airpowerEta * 2) + _timeOnTarget);
+            missionNamespace setVariable ["APW_airAssetRequested", false, true];
+        };
+    };
 
     //Initial contact with air
     if (_fullVP) then {
@@ -181,7 +192,13 @@ if (!(_nightTimeOnly) || {(daytime >= _dusk || daytime < _dawn)}) then {
 
 	missionNamespace setVariable ["APW_airAssetRequested", true, true]; //Prevents multiple requests for aircraft
 	sleep (5 + (random 10));
-	hqObject globalChat format ["%1: %2 is unavailable.",_hqCallsign,_airCallsign];
+	hqObject globalChat format ["%1: %2 is currently unavailable.",_hqCallsign,_airCallsign];
+
+    [_requestInterval] spawn {
+        params [["_requestInterval",15]];
+        sleep (_requestInterval * 60);
+        missionNamespace setVariable ["APW_airAssetRequested", false, true];
+    };
 
 } else {
 
