@@ -18,6 +18,10 @@ switch (_operation) do {
 			},[],6,true,true,"","(_this == _target)"
 		];
 
+		_activeActions = [APW_abortStrike];
+
+		_callingObject setVariable ["APW_activeActions",_activeActions];
+
 		_return = APW_abortStrike;
 	};
 
@@ -44,6 +48,10 @@ switch (_operation) do {
 
 			},[],5,true,true,"","(_this == _target)"
 		];
+
+		_activeActions = [APW_confirmTarget,APW_cancelTarget];
+
+		_callingObject setVariable ["APW_activeActions",_activeActions];
 
 		_return = ["APW_stageProceed","APW_abortStrike"];
 	};
@@ -154,10 +162,13 @@ switch (_operation) do {
 			},[],5,true,true,"","(_this == _target)"
 		];
 
-
 		_colourActions = [APW_confirmGreen,APW_confirmRed,APW_confirmYellow,APW_confirmBlue,APW_confirmWhite,APW_confirmPurple,APW_confirmOrange];
 
 		_callingObject setVariable ["APW_colourActions",_colourActions];
+
+		_activeActions = [APW_confirmGreen,APW_confirmRed,APW_confirmYellow,APW_confirmBlue,APW_confirmWhite,APW_confirmPurple,APW_confirmOrange,APW_cancelSmokeTarget];
+
+		_callingObject setVariable ["APW_activeActions",_activeActions];
 
 		_return = ["APW_stageProceed","APW_abortStrike","APW_markColour","APW_colourActions"];
 	};
@@ -185,6 +196,10 @@ switch (_operation) do {
 
 			},[],5,true,true,"","(_this == _target)"
 		];
+
+		_activeActions = [APW_finalConfirm,APW_finalCancel];
+
+		_callingObject setVariable ["APW_activeActions",_activeActions];
 
 		_return = ["APW_stageProceed","APW_abortStrike"];
 	};
@@ -229,6 +244,10 @@ switch (_operation) do {
 
 			},[],5,true,true,"","(_this == _target)"
 		];
+
+		_activeActions = [APW_confirmTargetLaser,APW_confirmTargetThrow,APW_cancelStrikeRequest];
+
+		_callingObject setVariable ["APW_activeActions",_activeActions];
 
 		_return = ["APW_stageProceed","APW_abortStrike","APW_markType"];
 	};
@@ -294,6 +313,10 @@ switch (_operation) do {
 			},[],5,true,true,"","(_this == _target)"
 		];
 
+		_activeActions = [APW_confirmTargetMultiNeg,APW_confirmTargetMultiAff,APW_confirmTargetMultiRe,APW_cancelMultiTarget];
+
+		_callingObject setVariable ["APW_activeActions",_activeActions];
+
 		_return = ["APW_stageProceed","APW_abortStrike","APW_multiTarget","APW_reconfirmStrike"];
 	};
 
@@ -339,6 +362,10 @@ switch (_operation) do {
 				_callingObject setVariable ["APW_reconfirmStrike",false];
 			},[],5,true,true,"","(_this == _target)"
 		];
+
+		_activeActions = [APW_confirmMarkCorrect,APW_confirmMarkRe,APW_cancelMarkTarget];
+
+		_callingObject setVariable ["APW_activeActions",_activeActions];
 
 		_return = ["APW_stageProceed","APW_abortStrike","APW_multiTarget","APW_reconfirmStrike"];
 	};
@@ -428,6 +455,10 @@ switch (_operation) do {
 
 		_callingObject setVariable ["APW_colourActions",_colourActions];
 
+		_activeActions = [APW_confirmIR,APW_confirmGreen,APW_confirmRed,APW_confirmYellow,APW_confirmBlue,APW_cancelSmokeTargetNight];
+
+		_callingObject setVariable ["APW_activeActions",_activeActions];
+
 		_return = ["APW_stageProceed","APW_abortStrike","APW_markColour","APW_colourActions"];
 	};
 
@@ -489,6 +520,10 @@ switch (_operation) do {
 			_actionArray pushBack APW_cancelSelectAmmo;
 		};
 
+		_activeActions = [];
+
+		_callingObject setVariable ["APW_activeActions",_actionArray];
+
 		_callingObject setVariable ["APW_ammoActionArray",_actionArray];
 
 		_return = ["APW_stageProceed","APW_abortStrike","APW_ammoType","APW_ammoActionArray"];
@@ -535,6 +570,10 @@ switch (_operation) do {
 
 			},[],5,true,true,"","(_this == _target)"
 		];
+
+		_activeActions = [APW_selectGuidance1,APW_selectGuidance2,APW_cancelStickyTarget];
+
+		_callingObject setVariable ["APW_activeActions",_activeActions];
 
 		_return = ["APW_stageProceed","APW_abortStrike","APW_ammoType","APW_ammoActionArray"];
 	};
