@@ -32,9 +32,8 @@ waitUntil {
 if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
 	private _actionArray = (_callingObject getVariable "APW_activeActions");
 	{_callingObject removeAction _x} forEach _actionArray;
-	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
 	_hqObject globalChat format ["%1: Nothing heard. Aborting.",_airCallsign];
-	[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
+	[_callingObject,"AbortStrike"] call APW_fnc_APWMain;
 };
 _callingObject setVariable ["APW_stageProceed",false];
 
@@ -166,7 +165,7 @@ if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
 	{_callingObject removeAction _x} forEach _actionArray;
 	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
 	_hqObject globalChat format ["%1: Nothing heard. Aborting.",_airCallsign];
-	[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
+	[_callingObject,"AbortStrike"] call APW_fnc_APWMain;
 };
 
 _callingObject setVariable ["APW_stageProceed",false];
