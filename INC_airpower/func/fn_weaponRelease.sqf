@@ -37,7 +37,7 @@ _this spawn {
 
 					_target = _laserObject;
 
-					_perSecondChecks = 15;
+					_perSecondChecks = 25;
 
 					_projectile = _ordnance createVehicle [0,0,500];
 					_projectile setPos _launchPos;
@@ -191,7 +191,7 @@ _this spawn {
 
 					sleep (_travelEstimate - (_height / _speed));
 
-					_perSecondChecks = 15;
+					_perSecondChecks = 25;
 
 					_projectile = _ordnance createVehicle [0,0,500];
 					_projectile setPosWorld [(getPosWorld _target select 0),(getPosWorld _target select 1),_height];
