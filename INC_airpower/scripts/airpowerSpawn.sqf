@@ -68,15 +68,6 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= _dusk || d
 
     private _timeOnTarget = ((_playTime + (random _playeTimeVar) - (random (2 * _playeTimeVar))) * 60);
 
-    //Waits until sortie is complete then allows further aircraft calls (if there are enough sorties remaining)
-    if (_sortiesLeft > 0) then {
-        [_airpowerEta,_timeOnTarget] spawn {
-            params ["_airpowerEta","_timeOnTarget"];
-            sleep ((_airpowerEta * 2) + _timeOnTarget);
-            missionNamespace setVariable ["APW_airAssetRequested", false, true];
-        };
-    };
-
     //Initial contact with air
     if (_fullVP) then {
         _hqObject globalChat format ["%1: %2, this is %3.",_airCallsign,(group _caller),_airCallsign];
@@ -169,21 +160,34 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= _dusk || d
         private ["_triggerStatements","_radioMessage"];
         _radioMessage = format ["Abort %1 Mission",_airCallsign];
 		APW_apAbtTrig = createTrigger ["EmptyDetector", [0,0,0]];
-        _triggerStatements = format ["deleteVehicle airpower; deleteVehicle APW_apAbtTrig; missionNamespace setVariable ['APW_airpowerTracking', false, true]; hqObject globalChat '%1: %2 mission aborted.'",_hqCallsign,_airCallsign];
+        _triggerStatements = format ["deleteVehicle APW_apTrig; deleteVehicle APW_apAbtTrig; missionNamespace setVariable ['APW_airpowerTracking', false, true]; missionNamespace setVariable ['APW_airMissionComplete', true, true]; hqObject globalChat '%1: %2 mission aborted.'",_hqCallsign,_airCallsign];
 		APW_apAbtTrig setTriggerActivation["DELTA","PRESENT",true];
 		APW_apAbtTrig setTriggerStatements["this", _triggerStatements, ""];
 		4 setRadioMsg _radioMessage;
 	};
 
-	sleep _timeOnTarget;
+    private _i = _timeOnTarget;
 
-	if (isNil "APW_airMissionComplete") then {
+    //Waits until the mission is complete or the aicraft is bingo fuel
+    waitUntil {
+        sleep 3;
+        _i = _i - 3;
+        (((_i < 1) || {(missionNamespace getVariable ["APW_airMissionComplete",false])}) && !(missionNameSpace getVariable ["APW_airpowerEngaging",false]))
+    };
+
+    //If the mission hasn't been completed, delete triggers and send that bee-hatch home
+	if !(missionNamespace getVariable ["APW_airMissionComplete",false]) then {
 		hqObject globalChat format ["%1: %2 is bingo, happy hunting.",_airCallsign,_airCallsign];
 		deleteVehicle APW_apTrig;
 		deleteVehicle APW_apAbtTrig;
 		missionNamespace setVariable ["APW_airpowerTracking", false, true];
 	};
 
+    //Reset the holding variables
+    sleep (_airpowerEta * 2);
+
+    missionNamespace setVariable ["APW_airAssetRequested", false, true];
+    missionNamespace setVariable ["APW_airMissionComplete", false, true];
 };
 
 
