@@ -38,10 +38,21 @@ hint "Select ordnance for strike request.";
 [_callingObject,"SelectAmmo"] call APW_fnc_actionHandler;
 
 //Hold until choice made
+private _i = 0;
 waitUntil {
-	sleep 0.5;
-	(_callingObject getVariable ["APW_stageProceed",false])
+	sleep 1;
+	_i = (_i + 1);
+	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60))
 };
+
+if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
+	private _actionArray = (_callingObject getVariable "APW_activeActions");
+	{_callingObject removeAction _x} forEach _actionArray;
+	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
+	_hqObject globalChat format ["%1: Nothing heard. Aborting.",_airCallsign];
+	[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
+};
+
 _callingObject setVariable ["APW_stageProceed",false];
 
 //Abort if option chosen
@@ -72,10 +83,21 @@ if (_fullVP) then {
 [_callingObject,"InitStrike"] call APW_fnc_actionHandler;
 
 //Hold until choice made
+private _i = 0;
 waitUntil {
-	sleep 2;
-	(_callingObject getVariable ["APW_stageProceed",false])
+	sleep 1;
+	_i = (_i + 1);
+	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60))
 };
+
+if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
+	private _actionArray = (_callingObject getVariable "APW_activeActions");
+	{_callingObject removeAction _x} forEach _actionArray;
+	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
+	_hqObject globalChat format ["%1: Nothing heard. Aborting.",_airCallsign];
+	[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
+};
+
 _callingObject setVariable ["APW_stageProceed",false];
 
 
@@ -93,7 +115,7 @@ sleep 1;
 if (_fullVP) then {_callingObject globalChat format ["Type 2 control by %1, 1 through 3 N/A, targets in the open, grid %2.",(group _callingObject),(mapGridPosition _callingObject)]};
 
 
-sleep 4;
+sleep 2;
 
 //Execute relevant script
 switch (_callingObject getVariable ["APW_markType","laser"]) do {

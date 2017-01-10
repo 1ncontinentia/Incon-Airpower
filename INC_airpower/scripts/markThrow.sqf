@@ -30,10 +30,21 @@ switch (_isNight) do {
 };
 
 //Hold until choice made
+private _i = 0;
 waitUntil {
-	sleep 2;
-	(_callingObject getVariable ["APW_stageProceed",false]);
+	sleep 1;
+	_i = (_i + 1);
+	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60))
 };
+
+if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
+	private _actionArray = (_callingObject getVariable "APW_activeActions");
+	{_callingObject removeAction _x} forEach _actionArray;
+	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
+	_hqObject globalChat format ["%1: Nothing heard. Aborting.",_airCallsign];
+	[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
+};
+
 _callingObject setVariable ["APW_stageProceed",false];
 
 //Abort option
@@ -118,11 +129,14 @@ if (typeName _stickyTarget == "OBJECT") then {
 	[_callingObject,"StickyTargetSelect"] call APW_fnc_actionHandler;
 
 	//Hold until choice made
+	private _i = 0;
 	waitUntil {
-		sleep 2;
-		(_callingObject getVariable ["APW_stageProceed",false]);
+		sleep 1;
+		_i = (_i + 1);
+		((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60))
 	};
-	_callingObject setVariable ["APW_stageProceed",false];
+
+	if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {};
 
 	if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {};
 
@@ -156,6 +170,16 @@ if (typeName _stickyTarget == "OBJECT") then {
 		_hqObject globalChat format ["%1: Confirmed, engaging mark.",_airCallsign];
 	};
 };
+
+if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
+	private _actionArray = (_callingObject getVariable "APW_activeActions");
+	{_callingObject removeAction _x} forEach _actionArray;
+	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
+	_hqObject globalChat format ["%1: Nothing heard. Aborting.",_airCallsign];
+	[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
+};
+
+_callingObject setVariable ["APW_stageProceed",false];
 
 //Abort option
 if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
@@ -255,10 +279,21 @@ sleep (1 + (random 1));
 //=======================================================================//
 _confirmTargetAction = [_callingObject,"FinalConfirmation"] call APW_fnc_actionHandler;
 //Hold until choice made
+private _i = 0;
 waitUntil {
-	sleep 2;
-	(_callingObject getVariable ["APW_stageProceed",false])
+	sleep 1;
+	_i = (_i + 1);
+	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > 60))
 };
+
+if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
+	private _actionArray = (_callingObject getVariable "APW_activeActions");
+	{_callingObject removeAction _x} forEach _actionArray;
+	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
+	_hqObject globalChat format ["%1: Nothing heard. Aborting.",_airCallsign];
+	[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
+};
+
 _callingObject setVariable ["APW_stageProceed",false];
 
 //Abort option
