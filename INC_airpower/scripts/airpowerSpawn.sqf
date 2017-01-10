@@ -66,7 +66,7 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= _dusk || d
 
 	sleep _airpowerETA;
 
-    private _timeOnTarget = ((_playTime + (random _playeTimeVar) - (random (2 * _playeTimeVar))) * 60);
+    private _timeOnTarget = ((_playTime + (random _playTimeVar) - (random (2 * _playTimeVar))) * 60);
 
     //Initial contact with air
     if (_fullVP) then {
