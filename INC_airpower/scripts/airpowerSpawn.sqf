@@ -199,8 +199,8 @@ if (!(_nightTimeOnly) || {(daytime >= _dusk || daytime < _dawn)}) then {
 	hqObject globalChat format ["%1: %2 is currently unavailable.",_hqCallsign,_airCallsign];
 
     [_requestInterval] spawn {
-        params [["_requestInterval",15]];
-        sleep (_requestInterval * 60);
+        params [["_requestInterval",45]];
+        sleep (random (_requestInterval * 60));
         missionNamespace setVariable ["APW_airAssetRequested", false, true];
     };
 

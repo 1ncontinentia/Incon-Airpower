@@ -6,7 +6,7 @@ Author: Incontinentia
 
 */
 
-private ["_necItem","_fullVP","_preStrikeCDE","_playTimeVar","_playTime","_percentage","_hqCallsign","_airCallsign","_nightTimeOnly","_dawn","_dusk","_aircraftType","_minTimeOnTgt","_randomDelay","_altitudeMin","_altitudeRandom","_radius","_speed","_ammoArray","_allowSensitive","_maxCollateral","_sideFriendly","_trackingEnabled","_percentageReliability","_isAffectedByOvercast","_objectOcclusion","_maxOvercastDegradation","_trackingRange","_terminalNecessary","_requestInterval","_repeatedStrikes"];
+private ["_necItem","_fullVP","_preStrikeCDE","_playTimeVar","_playTime","_percentage","_hqCallsign","_airCallsign","_nightTimeOnly","_dawn","_dusk","_aircraftType","_minTimeOnTgt","_randomDelay","_altitudeMin","_altitudeRandom","_radius","_speed","_ammoArray","_allowSensitive","_maxCollateral","_sideFriendly","_trackingEnabled","_percentageReliability","_isAffectedByOvercast","_objectOcclusion","_maxOvercastDegradation","_trackingRange","_terminalNecessary","_requestInterval","_repeatedStrikes","_timeout"];
 
 //General Options
 _percentage = 100;                      //Percentage chance that the aircraft will be available for sorties
@@ -31,8 +31,9 @@ _radius = 1500;                         //Radius of launch position around playe
 _rtbOnNoAmmo = false; 					//Should the unit RTB when out of ammo? (Set to false if you want the unit to continue tracking after it has run out of ammo)
 _playTime = 60;                         //Amount of time aircraft will remain on station (in minutes) - i.e. over the target area
 _playTimeVar = 5;                      //Variation in minutes for time on station (must be significantly less than _playtime to avoid errors)
-_requestInterval = 15;                  //Amount of time in minutes between unsuccessful aircraft requests (will be able to request again once this timer is done)
+_requestInterval = 45;                  //Maximum amount of time in minutes between unsuccessful aircraft requests (will be able to request again once this timer is done)
 _maxSorties = 2;                        //Max number of sorties
+_timeout = 60;                          //Radio message timout in seconds (player must communicate before this runs out or the mission will abort)
 
 //Ordnance options
 _bomb = 2;							    //How many GBUs will the air unit carry?
