@@ -30,7 +30,7 @@ _altitudeRandom = 4000;                 //Random additional altitude above minim
 _radius = 1500;                         //Radius of launch position around player in meters
 _rtbOnNoAmmo = false; 					//Should the unit RTB when out of ammo? (Set to false if you want the unit to continue tracking after it has run out of ammo)
 _playTime = 60;                         //Amount of time aircraft will remain on station (in minutes) - i.e. over the target area
-_playTimeVar = 5;                      //Variation in minutes for time on station (must be significantly less than _playtime to avoid errors)
+_playTimeVar = 15;                      //Variation in minutes for time on station (must be significantly less than _playtime to avoid errors)
 _requestInterval = 45;                  //Maximum amount of time in minutes between unsuccessful aircraft requests (will be able to request again once this timer is done)
 _maxSorties = 2;                        //Max number of sorties
 _timeout = 60;                          //Radio message timout in seconds (player must communicate before this runs out or the mission will abort - the final strike confirmation will be 15 times this value to enable coordination)
@@ -51,7 +51,7 @@ _sideFriendly = west;
 //Sensor / Tracking Options
 _trackingEnabled = true;                //Is tracking enabled? (If false, below settings are ignored)
 _percentageReliability = 98;			//What percentage of units will be picked up by tracking in perfect conditions?
-_isAffectedByOvercast = true;			//Is tracking affected by overcase conditions?
+_isAffectedByOvercast = true;			//Is tracking affected by overcast conditions?
 _objectOcclusion = true;				//Do objects block tracking (i.e. a unit standing under a building)?
 _maxOvercastDegradation = 70;			//How much % reliability will be lost at full overcast?
 _trackingRange = 800;					//Maximum tracking range from player
