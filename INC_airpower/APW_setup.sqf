@@ -33,7 +33,6 @@ _playTime = 60;                         //Amount of time aircraft will remain on
 _playTimeVar = 5;                      //Variation in minutes for time on station (must be significantly less than _playtime to avoid errors)
 _requestInterval = 45;                  //Maximum amount of time in minutes between unsuccessful aircraft requests (will be able to request again once this timer is done)
 _maxSorties = 2;                        //Max number of sorties
-_timeout = 60;                          //Radio message timout in seconds (player must communicate before this runs out or the mission will abort)
 
 //Ordnance options
 _bomb = 2;							    //How many GBUs will the air unit carry?

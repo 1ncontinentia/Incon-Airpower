@@ -48,7 +48,7 @@ waitUntil {
 if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
 	private _actionArray = (_callingObject getVariable "APW_activeActions");
 	{_callingObject removeAction _x} forEach _actionArray;
-	_hqObject globalChat format ["%1: Nothing heard. Aborting.",_airCallsign];
+	hint "No ordnance selected.";
 	[_callingObject,"AbortStrike"] call APW_fnc_APWMain;
 };
 
