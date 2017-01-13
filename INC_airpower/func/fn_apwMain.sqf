@@ -50,6 +50,8 @@ switch (_operation) do {
 
 		if (typeName _deleteObjectArray == "ARRAY") then {{deleteVehicle _x} forEach _deleteObjectArray};
 
+		{_callingObject removeAction _x} forEach (_callingObject getVariable "APW_activeActions");
+
 		[_callingObject,"NilVars"] call APW_fnc_APWMain;
 
 		_return = true;
