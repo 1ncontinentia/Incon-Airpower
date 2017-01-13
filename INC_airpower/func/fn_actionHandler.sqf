@@ -67,7 +67,7 @@ switch (_operation) do {
 				_callingObject setVariable ["APW_abortStrike",false];
 				_callingObject setVariable ["APW_markColour","IR"];
 
-			},[],6,true,true,"","((_this == _target) && {(daytime >= ((missionNamespace getVariable ['APW_sunriseSunset',[_dawn,_dusk]]) select 1) || daytime < ((missionNamespace getVariable ['APW_sunriseSunset',[_dawn,_dusk]]) select 0))}  )"
+			},[],6,true,true,"","((_this == _target) &&  (daytime >= APW_sunset || daytime < APW_sunrise)  )"
 		];
 
 		APW_confirmWhite = _callingObject addAction [
@@ -79,7 +79,7 @@ switch (_operation) do {
 				_callingObject setVariable ["APW_abortStrike",false];
 				_callingObject setVariable ["APW_markColour","White"];
 
-			},[],6,true,true,"","((_this == _target) && {!(daytime >= ((missionNamespace getVariable ['APW_sunriseSunset',[_dawn,_dusk]]) select 1) || daytime < ((missionNamespace getVariable ['APW_sunriseSunset',[_dawn,_dusk]]) select 0))}  )"
+			},[],6,true,true,"","((_this == _target) &&  !(daytime >= APW_sunset || daytime < APW_sunrise)  )"
 		];
 
 		APW_confirmPurple = _callingObject addAction [
