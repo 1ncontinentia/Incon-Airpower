@@ -26,7 +26,7 @@ private _i = 0;
 waitUntil {
 	sleep 1;
 	_i = (_i + 1);
-	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > _timeout) || (!alive _callingObject))
+	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > (_timeout * 5)) || (!alive _callingObject))
 };
 
 if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
