@@ -35,8 +35,6 @@ waitUntil {
 };
 
 if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
-	private _actionArray = (_callingObject getVariable "APW_activeActions");
-	{_callingObject removeAction _x} forEach _actionArray;
 	_hqObject globalChat format ["%1: Nothing heard. Aborting.",_airCallsign];
 	[_callingObject,"AbortStrike"] call APW_fnc_APWMain;
 };
@@ -45,8 +43,6 @@ _callingObject setVariable ["APW_stageProceed",false];
 
 //Abort option
 if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
-	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
-	sleep 0.2;
 	_callingObject globalChat "Abort CAS mission.";
 	sleep 1;
 	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
@@ -172,9 +168,6 @@ if (typeName _stickyTarget == "OBJECT") then {
 };
 
 if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
-	private _actionArray = (_callingObject getVariable "APW_activeActions");
-	{_callingObject removeAction _x} forEach _actionArray;
-	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
 	_hqObject globalChat format ["%1: Nothing heard. Aborting.",_airCallsign];
 	[_callingObject,"AbortStrike"] call APW_fnc_APWMain;
 };
@@ -227,7 +220,6 @@ sleep (3 + (random 2));
 
 //Abort option
 if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
-	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
 	_callingObject globalChat "Abort CAS mission.";
 	sleep 1;
 	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
@@ -238,7 +230,6 @@ sleep (3 + (random 5));
 
 //Abort option
 if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
-	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
 	_callingObject globalChat "Abort CAS mission.";
 	sleep 1;
 	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
@@ -251,7 +242,6 @@ if (_preStrikeCDE) then {_cdePass = [_callingObject,"DamageEstimateFeedback",[_p
 
 //Fail CDE exit
 if (!_cdePass) exitWith {
-	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
 	sleep (1 + (random 1));
 	_hqObject globalChat format ["%1: Designated target does not fit within ROE. %1 is disengaging.",_airCallsign,_airCallsign];
 	[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
@@ -259,7 +249,6 @@ if (!_cdePass) exitWith {
 
 //Abort option
 if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
-	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
 	_callingObject globalChat "Abort CAS mission.";
 	sleep 1;
 	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
@@ -298,9 +287,6 @@ waitUntil {
 };
 
 if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
-	private _actionArray = (_callingObject getVariable "APW_activeActions");
-	{_callingObject removeAction _x} forEach _actionArray;
-	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
 	_hqObject globalChat format ["%1: Nothing heard. Aborting.",_airCallsign];
 	[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
 };
@@ -309,7 +295,6 @@ _callingObject setVariable ["APW_stageProceed",false];
 
 //Abort option
 if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
-	if (!isNil "_secondaryTarget") then {deleteVehicle _secondaryTarget};
 	_callingObject globalChat "Abort CAS mission.";
 	sleep 1;
 	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
