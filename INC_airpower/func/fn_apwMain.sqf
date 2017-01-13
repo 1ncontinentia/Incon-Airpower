@@ -30,6 +30,8 @@ switch (_operation) do {
 		_callingObject setVariable ["APW_stickyTarget",nil];
 		_callingObject setVariable ["APW_strikeCompleted",nil];
 		_callingObject setVariable ["APW_reconfirmStrike",nil];
+		_callingObject setVariable ["APW_activeTarget",nil];
+		_callingObject setVariable ["APW_multiTgtPoss",nil];
 
 		_return = true;
 	};
@@ -234,9 +236,9 @@ switch (_operation) do {
 		_markerColour = (toLower (_callingObject getVariable "APW_markColour"));
 
 		if ((count _nearbyThrowArray) == 1) then {
-			_hqObject globalChat format ["%1: Eyes on %2 target marker, standby.",_airCallsign,_markerColour];
+			_hqObject globalChat format ["%1: Eyes on %2 target marker.",_airCallsign,_markerColour];
 		} else {
-			_hqObject globalChat format ["%1: %2 %3 target markers found in your vicinity, engaging the closest to your location, standby.",_airCallsign,(count _nearbyThrowArray),_markerColour];
+			_hqObject globalChat format ["%1: %2 %3 target markers found in your vicinity, engaging the closest to your location.",_airCallsign,(count _nearbyThrowArray),_markerColour];
 		};
 
 		_return = _nearbyThrowArray;
