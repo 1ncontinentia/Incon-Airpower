@@ -133,7 +133,7 @@ switch (_operation) do {
 
 				switch (_markerColour isEqualTo "IR") do {
 					case true: {
-						_callingObject globalChat format ["Target is marked with Infrared. Friendlies at grid %1.",(mapGridPosition _callingObject)];
+						_callingObject globalChat format ["Target is marked with IR. Friendlies at grid %1.",(mapGridPosition _callingObject)];
 					};
 					case false: {
 						_callingObject globalChat format ["Target is marked with a %1 chemlight. Friendlies at grid %2.",_markerColourLwr,(mapGridPosition _callingObject)];
@@ -151,15 +151,18 @@ switch (_operation) do {
 
 	case "FindThrowMarker": {
 
-		private ["_nearbyThrowArray","_isNight","_markerColour"];
+		private ["_nearbyThrowArray","_isNight","_markerColour","_markerColourLwr"];
 
 		if ((daytime >= APW_sunset) || {daytime < APW_sunrise}) then {_isNight = true} else {_isNight = false};
 
 		_markerColour = (_callingObject getVariable "APW_markColour");
 
+		_markerColourLwr = (toLower _markerColour);
+
 		_nearbyThrowArray = [];
 
 		switch (_isNight) do {
+
 			case true: {
 
 				switch (_markerColour isEqualTo "IR") do {
@@ -173,8 +176,47 @@ switch (_operation) do {
 			};
 
 			case false: {
-				_nearbyThrowArray = (nearestObjects [getPosATL _callingObject, [], 400]) select {
-					(((str typeOf _x) find "Smoke") >= 0) && {(((str typeOf _x) find _markerColour) >= 0)}
+
+				switch (_markerColour isEqualTo "White") do {
+
+					case true: {
+
+						_nearbyThrowArray = (nearestObjects [getPosATL _callingObject, [], 400]) select {
+
+							(((str typeOf _x) find "Smoke") >= 0) ||
+
+							{
+								(((str typeOf _x) find "rhs_") >= 0) &&
+
+								{
+									(((str typeOf _x) find "white") >= 0) ||
+									{(((str typeOf _x) find "an_m8hc") >= 0)}
+								} &&
+
+								{!(((str typeOf _x) find "racer") >= 0)}
+
+							};
+						};
+					};
+
+					case false: {
+
+						_nearbyThrowArray = (nearestObjects [getPosATL _callingObject, [], 400]) select {
+
+							(
+								(((str typeOf _x) find "Smoke") >= 0) &&
+								{(((str typeOf _x) find _markerColour) >= 0)}
+							) ||
+
+							{
+								(((str typeOf _x) find "rhs_") >= 0) &&
+								{(((str typeOf _x) find _markerColourLwr) >= 0)} &&
+								{!(((str typeOf _x) find "racer") >= 0)} &&
+								{!(((str typeOf _x) find "40mm") >= 0)}
+							}
+
+						};
+					};
 				};
 			};
 		};

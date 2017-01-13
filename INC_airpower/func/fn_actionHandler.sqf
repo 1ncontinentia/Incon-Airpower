@@ -56,27 +56,37 @@ switch (_operation) do {
 		_return = ["APW_stageProceed","APW_abortStrike"];
 	};
 
-	case "DaySmoke": {
+	case "MarkTarget": {
 
-		APW_confirmWhite = _callingObject addAction [
-			"<t color='#FFFFFF'>Target marked with white smoke</t>", {
+		APW_confirmIR = _callingObject addAction [
+			"<t color='#FFFFFF'>IR marker</t>", {
 				_callingObject = _this select 0;
-				private _colourActions = (_callingObject getVariable "APW_colourActions");
-				{_callingObject removeAction _x} forEach _colourActions;
-				_callingObject removeAction APW_cancelSmokeTarget;
+				private _activeActions = (_callingObject getVariable "APW_activeActions");
+				{_callingObject removeAction _x} forEach _activeActions;
 				_callingObject setVariable ["APW_stageProceed",true];
 				_callingObject setVariable ["APW_abortStrike",false];
-				_callingObject setVariable ["APW_markColour","Smoke"];
+				_callingObject setVariable ["APW_markColour","IR"];
 
-			},[],6,true,true,"","(_this == _target)"
+			},[],6,true,true,"","((_this == _target) && {(daytime >= ((missionNamespace getVariable ['APW_sunriseSunset',[_dawn,_dusk]]) select 1) || daytime < ((missionNamespace getVariable ['APW_sunriseSunset',[_dawn,_dusk]]) select 0))}  )"
+		];
+
+		APW_confirmWhite = _callingObject addAction [
+			"<t color='#FFFFFF'>White marker</t>", {
+				_callingObject = _this select 0;
+				private _activeActions = (_callingObject getVariable "APW_activeActions");
+				{_callingObject removeAction _x} forEach _activeActions;
+				_callingObject setVariable ["APW_stageProceed",true];
+				_callingObject setVariable ["APW_abortStrike",false];
+				_callingObject setVariable ["APW_markColour","White"];
+
+			},[],6,true,true,"","((_this == _target) && {!(daytime >= ((missionNamespace getVariable ['APW_sunriseSunset',[_dawn,_dusk]]) select 1) || daytime < ((missionNamespace getVariable ['APW_sunriseSunset',[_dawn,_dusk]]) select 0))}  )"
 		];
 
 		APW_confirmPurple = _callingObject addAction [
-			"<t color='#FF33BB'>Target marked with purple smoke</t>", {
+			"<t color='#FF33BB'>Purple marker</t>", {
 				_callingObject = _this select 0;
-				private _colourActions = (_callingObject getVariable "APW_colourActions");
-				{_callingObject removeAction _x} forEach _colourActions;
-				_callingObject removeAction APW_cancelSmokeTarget;
+				private _activeActions = (_callingObject getVariable "APW_activeActions");
+				{_callingObject removeAction _x} forEach _activeActions;
 				_callingObject setVariable ["APW_stageProceed",true];
 				_callingObject setVariable ["APW_abortStrike",false];
 				_callingObject setVariable ["APW_markColour","Purple"];
@@ -85,11 +95,10 @@ switch (_operation) do {
 		];
 
 		APW_confirmOrange = _callingObject addAction [
-			"<t color='#FFC300'>Target marked with orange smoke</t>", {
+			"<t color='#FFC300'>Orange marker</t>", {
 				_callingObject = _this select 0;
-				private _colourActions = (_callingObject getVariable "APW_colourActions");
-				{_callingObject removeAction _x} forEach _colourActions;
-				_callingObject removeAction APW_cancelSmokeTarget;
+				private _activeActions = (_callingObject getVariable "APW_activeActions");
+				{_callingObject removeAction _x} forEach _activeActions;
 				_callingObject setVariable ["APW_stageProceed",true];
 				_callingObject setVariable ["APW_abortStrike",false];
 				_callingObject setVariable ["APW_markColour","Orange"];
@@ -98,11 +107,10 @@ switch (_operation) do {
 		];
 
 		APW_confirmGreen = _callingObject addAction [
-			"<t color='#33FF42'>Target marked with green smoke</t>", {
+			"<t color='#33FF42'>Green marker</t>", {
 				_callingObject = _this select 0;
-				private _colourActions = (_callingObject getVariable "APW_colourActions");
-				{_callingObject removeAction _x} forEach _colourActions;
-				_callingObject removeAction APW_cancelSmokeTarget;
+				private _activeActions = (_callingObject getVariable "APW_activeActions");
+				{_callingObject removeAction _x} forEach _activeActions;
 				_callingObject setVariable ["APW_stageProceed",true];
 				_callingObject setVariable ["APW_abortStrike",false];
 				_callingObject setVariable ["APW_markColour","Green"];
@@ -111,11 +119,10 @@ switch (_operation) do {
 		];
 
 		APW_confirmRed = _callingObject addAction [
-			"<t color='#FF0000'>Target marked with red smoke</t>", {
+			"<t color='#FF0000'>Red marker</t>", {
 				_callingObject = _this select 0;
-				private _colourActions = (_callingObject getVariable "APW_colourActions");
-				{_callingObject removeAction _x} forEach _colourActions;
-				_callingObject removeAction APW_cancelSmokeTarget;
+				private _activeActions = (_callingObject getVariable "APW_activeActions");
+				{_callingObject removeAction _x} forEach _activeActions;
 				_callingObject setVariable ["APW_stageProceed",true];
 				_callingObject setVariable ["APW_abortStrike",false];
 				_callingObject setVariable ["APW_markColour","Red"];
@@ -124,11 +131,10 @@ switch (_operation) do {
 		];
 
 		APW_confirmYellow = _callingObject addAction [
-			"<t color='#FFFC33'>Target marked with yellow smoke</t>", {
+			"<t color='#FFFC33'>Yellow marker</t>", {
 				_callingObject = _this select 0;
-				private _colourActions = (_callingObject getVariable "APW_colourActions");
-				{_callingObject removeAction _x} forEach _colourActions;
-				_callingObject removeAction APW_cancelSmokeTarget;
+				private _activeActions = (_callingObject getVariable "APW_activeActions");
+				{_callingObject removeAction _x} forEach _activeActions;
 				_callingObject setVariable ["APW_stageProceed",true];
 				_callingObject setVariable ["APW_abortStrike",false];
 				_callingObject setVariable ["APW_markColour","Yellow"];
@@ -137,11 +143,10 @@ switch (_operation) do {
 		];
 
 		APW_confirmBlue = _callingObject addAction [
-			"<t color='#3346FF'>Target marked with blue smoke</t>", {
+			"<t color='#3346FF'>Blue marker</t>", {
 				_callingObject = _this select 0;
-				private _colourActions = (_callingObject getVariable "APW_colourActions");
-				{_callingObject removeAction _x} forEach _colourActions;
-				_callingObject removeAction APW_cancelSmokeTarget;
+				private _activeActions = (_callingObject getVariable "APW_activeActions");
+				{_callingObject removeAction _x} forEach _activeActions;
 				_callingObject setVariable ["APW_stageProceed",true];
 				_callingObject setVariable ["APW_abortStrike",false];
 				_callingObject setVariable ["APW_markColour","Blue"];
@@ -149,12 +154,12 @@ switch (_operation) do {
 			},[],6,true,true,"","(_this == _target)"
 		];
 
-		APW_cancelSmokeTarget = _callingObject addAction [
+		//Cancel target
+		APW_cancelMarker = _callingObject addAction [
 			"<t color='#FF0000'>Abort CAS Mission</t>", {
 				_callingObject = _this select 0;
-				private _colourActions = (_callingObject getVariable "APW_colourActions");
-				{_callingObject removeAction _x} forEach _colourActions;
-				_callingObject removeAction APW_cancelSmokeTarget;
+				private _activeActions = (_callingObject getVariable "APW_activeActions");
+				{_callingObject removeAction _x} forEach _activeActions;
 				_callingObject setVariable ["APW_stageProceed",true];
 				_callingObject setVariable ["APW_abortStrike",true];
 				_callingObject setVariable ["APW_markColour",nil];
@@ -162,15 +167,11 @@ switch (_operation) do {
 			},[],5,true,true,"","(_this == _target)"
 		];
 
-		_colourActions = [APW_confirmGreen,APW_confirmRed,APW_confirmYellow,APW_confirmBlue,APW_confirmWhite,APW_confirmPurple,APW_confirmOrange];
-
-		_callingObject setVariable ["APW_colourActions",_colourActions];
-
-		_activeActions = [APW_confirmGreen,APW_confirmRed,APW_confirmYellow,APW_confirmBlue,APW_confirmWhite,APW_confirmPurple,APW_confirmOrange,APW_cancelSmokeTarget];
+		_activeActions = [APW_confirmIR,APW_confirmWhite,APW_confirmPurple,APW_confirmOrange,APW_confirmGreen,APW_confirmRed,APW_confirmYellow,APW_confirmBlue,APW_cancelMarker];
 
 		_callingObject setVariable ["APW_activeActions",_activeActions];
 
-		_return = ["APW_stageProceed","APW_abortStrike","APW_markColour","APW_colourActions"];
+		_return = ["APW_stageProceed","APW_abortStrike","APW_markColour","APW_activeActions"];
 	};
 
 	case "FinalConfirmation": {
@@ -314,9 +315,8 @@ switch (_operation) do {
 		APW_confirmMarkCorrect = _callingObject addAction [
 			"<t color='#D8FF00'>Proceed with CAS</t>", {
 				_callingObject = _this select 0;
-				_callingObject removeAction APW_confirmMarkCorrect;
-				_callingObject removeAction APW_confirmMarkRe;
-				_callingObject removeAction APW_cancelMarkTarget;
+				private _activeActions = (_callingObject getVariable "APW_activeActions");
+				{_callingObject removeAction _x} forEach _activeActions;
 				_callingObject setVariable ["APW_stageProceed",true];
 				_callingObject setVariable ["APW_abortStrike",false];
 				_callingObject setVariable ["APW_multiTarget",false];
@@ -355,98 +355,6 @@ switch (_operation) do {
 		_callingObject setVariable ["APW_activeActions",_activeActions];
 
 		_return = ["APW_stageProceed","APW_abortStrike","APW_multiTarget","APW_reconfirmStrike"];
-	};
-
-	case "NightSmoke": {
-
-		APW_confirmIR = _callingObject addAction [
-			"<t color='#FFFFFF'>Target marked with IR chemlight / strobe</t>", {
-				_callingObject = _this select 0;
-				private _colourActions = (_callingObject getVariable "APW_colourActions");
-				{_callingObject removeAction _x} forEach _colourActions;
-				_callingObject removeAction APW_cancelSmokeTargetNight;
-				_callingObject setVariable ["APW_stageProceed",true];
-				_callingObject setVariable ["APW_abortStrike",false];
-				_callingObject setVariable ["APW_markColour","IR"];
-
-			},[],6,true,true,"","(_this == _target)"
-		];
-
-		APW_confirmGreen = _callingObject addAction [
-			"<t color='#33FF42'>Target marked with green chemlight</t>", {
-				_callingObject = _this select 0;
-				private _colourActions = (_callingObject getVariable "APW_colourActions");
-				{_callingObject removeAction _x} forEach _colourActions;
-				_callingObject removeAction APW_cancelSmokeTargetNight;
-				_callingObject setVariable ["APW_stageProceed",true];
-				_callingObject setVariable ["APW_abortStrike",false];
-				_callingObject setVariable ["APW_markColour","Green"];
-
-			},[],6,true,true,"","(_this == _target)"
-		];
-
-		APW_confirmRed = _callingObject addAction [
-			"<t color='#FF0000'>Target marked with red chemlight</t>", {
-				_callingObject = _this select 0;
-				private _colourActions = (_callingObject getVariable "APW_colourActions");
-				{_callingObject removeAction _x} forEach _colourActions;
-				_callingObject removeAction APW_cancelSmokeTargetNight;
-				_callingObject setVariable ["APW_stageProceed",true];
-				_callingObject setVariable ["APW_abortStrike",false];
-				_callingObject setVariable ["APW_markColour","Red"];
-
-			},[],6,true,true,"","(_this == _target)"
-		];
-
-		APW_confirmYellow = _callingObject addAction [
-			"<t color='#FFFC33'>Target marked with yellow chemlight</t>", {
-				_callingObject = _this select 0;
-				private _colourActions = (_callingObject getVariable "APW_colourActions");
-				{_callingObject removeAction _x} forEach _colourActions;
-				_callingObject removeAction APW_cancelSmokeTargetNight;
-				_callingObject setVariable ["APW_stageProceed",true];
-				_callingObject setVariable ["APW_abortStrike",false];
-				_callingObject setVariable ["APW_markColour","Yellow"];
-
-			},[],6,true,true,"","(_this == _target)"
-		];
-
-		APW_confirmBlue = _callingObject addAction [
-			"<t color='#3346FF'>Target marked with blue chemlight</t>", {
-				_callingObject = _this select 0;
-				private _colourActions = (_callingObject getVariable "APW_colourActions");
-				{_callingObject removeAction _x} forEach _colourActions;
-				_callingObject removeAction APW_cancelSmokeTargetNight;
-				_callingObject setVariable ["APW_stageProceed",true];
-				_callingObject setVariable ["APW_abortStrike",false];
-				_callingObject setVariable ["APW_markColour","Blue"];
-
-			},[],6,true,true,"","(_this == _target)"
-		];
-
-		//Cancel target
-		APW_cancelSmokeTargetNight = _callingObject addAction [
-			"<t color='#FF0000'>Abort CAS Mission</t>", {
-				_callingObject = _this select 0;
-				private _colourActions = (_callingObject getVariable "APW_colourActions");
-				{_callingObject removeAction _x} forEach _colourActions;
-				_callingObject removeAction APW_cancelSmokeTargetNight;
-				_callingObject setVariable ["APW_stageProceed",true];
-				_callingObject setVariable ["APW_abortStrike",true];
-				_callingObject setVariable ["APW_markColour",nil];
-
-			},[],5,true,true,"","(_this == _target)"
-		];
-
-		_colourActions = [APW_confirmIR,APW_confirmGreen,APW_confirmRed,APW_confirmYellow,APW_confirmBlue];
-
-		_callingObject setVariable ["APW_colourActions",_colourActions];
-
-		_activeActions = [APW_confirmIR,APW_confirmGreen,APW_confirmRed,APW_confirmYellow,APW_confirmBlue,APW_cancelSmokeTargetNight];
-
-		_callingObject setVariable ["APW_activeActions",_activeActions];
-
-		_return = ["APW_stageProceed","APW_abortStrike","APW_markColour","APW_colourActions"];
 	};
 
 	case "SelectAmmo": {

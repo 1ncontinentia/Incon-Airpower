@@ -20,14 +20,9 @@ if ((daytime >= APW_sunset) || {daytime < APW_sunrise}) then {_isNight = true} e
 
 //Select smoke / chemlight colour based on whether night of day
 //=======================================================================//
-switch (_isNight) do {
-	case true: {
-		[_callingObject,"NightSmoke"] call APW_fnc_actionHandler;
-	};
-	case false: {
-		[_callingObject,"DaySmoke"] call APW_fnc_actionHandler;
-	};
-};
+
+[_callingObject,"MarkTarget"] call APW_fnc_actionHandler;
+
 
 //Hold until choice made
 private _i = 0;
