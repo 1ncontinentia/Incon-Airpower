@@ -9,7 +9,7 @@ Modified by: Incontinentia
 
 _this spawn {
 
-	params [["_callingObject",player],["_operation","autoGuideBomb"],["_args",[]],["_hqObject",hqObject]];
+	params [["_callingObject",player],["_operation","autoGuideOrdnance"],["_args",[]],["_hqObject",hqObject]];
 
 	if (!local _callingObject) exitWith {};
 
@@ -18,6 +18,8 @@ _this spawn {
 	switch (_operation) do {
 
 		case "autoGuideOrdnance": {
+
+			_args params [["_launchPos",[0,0,15000]],["_primaryTarget",objNull],["_primaryLaunch",false],["_aircraftObject",APW_apTrig]];
 
 			//Get ordnance type
 			switch (_callingObject getVariable ["APW_ammoType","missile"]) do {
