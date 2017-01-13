@@ -31,36 +31,6 @@ if (!_ammoAvailable) exitWith {
 	hint format ["%1 ordnance expended.",_airCallsign]
 };
 
-hint "Select ordnance for strike request.";
-
-//Select ammo
-//=======================================================================//
-[_callingObject,"SelectAmmo"] call APW_fnc_actionHandler;
-
-//Hold until choice made
-private _i = 0;
-waitUntil {
-	sleep 1;
-	_i = (_i + 1);
-	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > _timeout))
-};
-
-if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
-	private _actionArray = (_callingObject getVariable "APW_activeActions");
-	{_callingObject removeAction _x} forEach _actionArray;
-	hint "No ordnance selected.";
-	[_callingObject,"AbortStrike"] call APW_fnc_APWMain;
-};
-
-_callingObject setVariable ["APW_stageProceed",false];
-
-//Abort if option chosen
-if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
-	[_callingObject,"AbortStrike"] call APW_fnc_APWMain;
-	hint "Strike cancelled";
-};
-//=======================================================================//
-
 
 //Strike ordnace now selected and stored in _callingObject getVariable ["APW_ammoType","missile"]; options are "bomb" or "missile".
 //Ammo selected, puts in request for bomb / missile strike with aircraft

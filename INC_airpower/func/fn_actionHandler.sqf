@@ -275,7 +275,7 @@ switch (_operation) do {
 				_callingObject setVariable ["APW_multiTarget",true];
 				_callingObject setVariable ["APW_reconfirmStrike",false];
 
-			},[],5.5,true,true,"","(_this == _target)"
+			},[],5.5,true,true,"","((_this == _target) && {(_callingObject getVariable ['APW_multiTgtPoss'false])})"
 		];
 
 		APW_confirmTargetMultiRe = _callingObject addAction [
@@ -374,9 +374,10 @@ switch (_operation) do {
 					_callingObject = _this select 0;
 					private _ammoActions = (_callingObject getVariable "APW_ammoActionArray");
 					{_callingObject removeAction _x} forEach _ammoActions;
+					private _target = (_callingObject getVariable "APW_activeTarget");
 					_callingObject setVariable ["APW_stageProceed",true];
 					_callingObject setVariable ["APW_abortStrike",false];
-					_callingObject setVariable ["APW_ammoType","bomb"];
+					_target setVariable ["APW_ammoType","bomb"];
 
 				},[],6,true,true,"","(_this == _target)"
 			];

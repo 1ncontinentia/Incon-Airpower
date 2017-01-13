@@ -22,7 +22,7 @@ _this spawn {
 			_args params [["_launchPos",[0,0,15000]],["_primaryTarget",objNull],["_primaryLaunch",false],["_aircraftObject",APW_apTrig]];
 
 			//Get ordnance type
-			switch (_callingObject getVariable ["APW_ammoType","missile"]) do {
+			switch (_primaryTarget getVariable ["APW_ammoType","missile"]) do {
 
 				case "bomb": {
 

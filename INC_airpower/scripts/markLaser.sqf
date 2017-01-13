@@ -185,23 +185,43 @@ switch (_stickyTargetActive) do {
 
 _primaryTarget = _secondaryTarget;
 
+//Select ammo
+//=======================================================================//
+_callingObject setVariable ["APW_activeTarget",_primaryTarget];
+[_callingObject,"SelectAmmo"] call APW_fnc_actionHandler;
+
+//Hold until choice made
+private _i = 0;
+waitUntil {
+	sleep 1;
+	_i = (_i + 1);
+	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > _timeout))
+};
+
+if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
+	_hqObject globalChat format ["%1: Nothing heard. Aborting.",_airCallsign];
+	[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
+};
+
+_callingObject setVariable ["APW_stageProceed",false];
+
+//Abort option
+if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
+	_callingObject globalChat "Abort CAS mission.";
+	sleep 1;
+	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
+	[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
+};
+//=======================================================================//
+
+
 //Multiple target option
 //=======================================================================//
-private ["_targetCount","_allowMultiTgt","_multiTgtAmmo"];
+[_callingObject,"AllowMultiTgt"] call APW_fnc_actionHandler;
 
-_allowMultiTgt = false;
+sleep 0.5;
 
-_targetCount = (count (_callingObject getVariable ["APW_targetArray",[]]));
-
-_multiTgtAmmo = (_callingObject getVariable ["APW_ammoType","missile"]);
-
-//If there's enough ammo for another strike add multitarget options
-if ([_callingObject,"HasEnoughAmmo",[_multiTgtAmmo,(_targetCount + 2)]] call APW_fnc_APWMain) then {
-	//_allowMultiTgt = true;
-	[_callingObject,"MultiTarget"] call APW_fnc_actionHandler;
-} else {
-	[_callingObject,"confirmCorrect"] call APW_fnc_actionHandler;
-};
+[_callingObject,"MultiTarget"] call APW_fnc_actionHandler;
 
 private _i = 0;
 waitUntil {
@@ -253,7 +273,7 @@ if (_callingObject getVariable ["APW_multiTarget",false]) exitWith {
 //=======================================================================//
 sleep 3;
 
-if (_fullVP) then {_callingObject globalChat format ["Restrictions per ROE. Ground commander's intent is to destroy marked targets with a %1.",(_callingObject getVariable ["APW_ammoType","missile"])]};
+if (_fullVP) then {_callingObject globalChat format ["Restrictions per ROE. Ground commander's intent is to destroy marked targets with a %1.",(_primaryTarget getVariable ["APW_ammoType","missile"])]};
 
 if !(_stickyTargetActive) then {
 	[_callingObject,_primaryTarget,_defaultTargetPos] spawn {
@@ -394,20 +414,55 @@ sleep (1.2 + (random 0.5));
 _launchPos2d = ([(getPosWorld _callingObject),_radius] call CBA_fnc_Randpos);
 _launchPos = ([(_launchPos2d select 0), (_launchPos2d select 1), (_altitudeMin + (random _altitudeRandom))]);
 
-_targetArray = _callingObject getVariable ["APW_targetArray",[]];
+private ["_missileTargets","_bombTargets","_primaryLaunch"];
 
-_primaryLaunch = _targetArray select 0;
+_missileTargets = (_callingObject getVariable ["APW_targetArray",[]]) select {((_x getVariable "APW_ammoType") isEqualTo "missile")};
 
-//Launch ordnance
-[_callingObject,"autoGuideOrdnance",[_launchPos,_primaryLaunch,true]] call APW_fnc_weaponRelease;
+_bombTargets = (_callingObject getVariable ["APW_targetArray",[]]) select {((_x getVariable "APW_ammoType") isEqualTo "bomb")};
 
-sleep 0.5;
+if ((count _missileTargets != 0) && (count _bombTargets != 0)) then {};
 
-for "_i" from 1 to ((count _targetArray) -1) do {
-    private ["_target"];
-	_target = (_targetArray select _i);
-	sleep 0.4;
-	[_callingObject,"autoGuideOrdnance",[_launchPos,_target,false]] call APW_fnc_weaponRelease;
+
+
+//Launch bombs first
+if (count _bombTargets != 0) then {
+
+	private _primaryLaunch = _bombTargets select 0;
+	[_callingObject,"autoGuideOrdnance",[_launchPos,_primaryLaunch,true]] call APW_fnc_weaponRelease;
+
+	sleep 0.5;
+
+	for "_i" from 1 to ((count _bombTargets) -1) do {
+		private ["_target"];
+		_target = (_bombTargets select _i);
+		sleep 0.4;
+		[_callingObject,"autoGuideOrdnance",[_launchPos,_target,false]] call APW_fnc_weaponRelease;
+	};
+
+};
+
+//Delay missile launch until ready for simultaneous strike
+if ((count _missileTargets != 0) && (count _bombTargets != 0)) then {
+	private ["_bombTime","_missileTime"];
+	_bombTime = (_launchPos distance (_bombTargets select 0)) / 200;
+	_missileTime = (_launchPos distance (_missileTargets select 0)) / 450;
+	sleep (_bombTime - _missileTime);
+};
+
+if (count _missileTargets != 0) then {
+
+	private _primaryLaunch = _missileTargets select 0;
+
+	[_callingObject,"autoGuideOrdnance",[_launchPos,_primaryLaunch,true]] call APW_fnc_weaponRelease;
+
+	sleep 0.5;
+
+	for "_i" from 1 to ((count _missileTargets) -1) do {
+		private ["_target"];
+		_target = (_missileTargets select _i);
+		sleep 0.4;
+		[_callingObject,"autoGuideOrdnance",[_launchPos,_target,false]] call APW_fnc_weaponRelease;
+	};
 };
 
 
@@ -419,6 +474,8 @@ waitUntil {
 	sleep 2;
 	(_callingObject getVariable ["APW_strikeCompleted",false])
 };
+
+_callingObject setVariable ["APW_activeTarget",objNull];
 
 _callingObject removeAction _abortAction;
 

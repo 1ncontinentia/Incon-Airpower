@@ -195,9 +195,36 @@ switch (_stickyTargetActive) do {
 
 _primaryTarget = _secondaryTarget;
 
-sleep 4;
+//Select ammo
+//=======================================================================//
+_callingObject setVariable ["APW_activeTarget",_primaryTarget];
+[_callingObject,"SelectAmmo"] call APW_fnc_actionHandler;
 
-if (_fullVP) then {_callingObject globalChat format ["Restrictions per ROE. Ground commander's intent is to destroy marked target with a %1.",(_callingObject getVariable ["APW_ammoType","missile"])]};
+//Hold until choice made
+private _i = 0;
+waitUntil {
+	sleep 1;
+	_i = (_i + 1);
+	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > _timeout))
+};
+
+if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
+	_hqObject globalChat format ["%1: Nothing heard. Aborting.",_airCallsign];
+	[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
+};
+
+_callingObject setVariable ["APW_stageProceed",false];
+
+//Abort option
+if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
+	_callingObject globalChat "Abort CAS mission.";
+	sleep 1;
+	_hqObject globalChat format ["%1: Roger, aborting.",_airCallsign];
+	[_callingObject,"AbortStrike",[_secondaryTarget]] call APW_fnc_APWMain;
+};
+//=======================================================================//
+
+if (_fullVP) then {_callingObject globalChat format ["Restrictions per ROE. Ground commander's intent is to destroy marked target with a %1.",(_primaryTarget getVariable ["APW_ammoType","missile"])]};
 
 
 sleep 5;
@@ -331,6 +358,8 @@ waitUntil {
 	sleep 2;
 	(_callingObject getVariable ["APW_strikeCompleted",false])
 };
+
+_callingObject setVariable ["APW_activeTarget",objNull];
 
 _callingObject removeAction _abortAction;
 
