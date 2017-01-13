@@ -35,7 +35,15 @@ _hqObject = hqObject;
 
 if (_fullVP) then {_caller globalChat format ["%1, this is %2, requesting air cover at GRID %3, over.",_hqCallsign,(group _caller),(mapGridPosition _caller)]};
 
-sleep 1;
+sleep 0.5;
+
+missionNamespace setVariable ["APW_sunrise",((date call BIS_fnc_sunriseSunsetTime) select 0),true];
+
+sleep 0.1;
+
+missionNamespace setVariable ["APW_sunset",((date call BIS_fnc_sunriseSunsetTime) select 1),true];
+
+sleep 0.5;
 
 if (missionNamespace getVariable ["APW_airAssetRequested",false]) exitWith {
 	sleep 0.5;

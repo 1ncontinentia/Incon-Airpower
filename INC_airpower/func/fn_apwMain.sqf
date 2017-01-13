@@ -120,7 +120,7 @@ switch (_operation) do {
 
 		private ["_nearbyThrowArray","_isNight","_markerColour","_markerColourLwr"];
 
-		if (daytime >= _dusk || daytime < _dawn) then {_isNight = true} else {_isNight = false};
+		if ((daytime >= APW_sunset) || {daytime < APW_sunrise}) then {_isNight = true} else {_isNight = false};
 
 		_markerColour = (_callingObject getVariable "APW_markColour");
 
@@ -153,7 +153,7 @@ switch (_operation) do {
 
 		private ["_nearbyThrowArray","_isNight","_markerColour"];
 
-		if (daytime >= _dusk || daytime < _dawn) then {_isNight = true} else {_isNight = false};
+		if ((daytime >= APW_sunset) || {daytime < APW_sunrise}) then {_isNight = true} else {_isNight = false};
 
 		_markerColour = (_callingObject getVariable "APW_markColour");
 

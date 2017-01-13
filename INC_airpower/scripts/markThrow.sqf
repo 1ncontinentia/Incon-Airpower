@@ -15,7 +15,7 @@ if (!_repeat) then {
 
 };
 
-if (daytime >= _dusk || daytime < _dawn) then {_isNight = true} else {_isNight = false};
+if ((daytime >= APW_sunset) || {daytime < APW_sunrise}) then {_isNight = true} else {_isNight = false};
 
 
 //Select smoke / chemlight colour based on whether night of day

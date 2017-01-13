@@ -13,8 +13,6 @@ _percentage = 100;                      //Percentage chance that the aircraft wi
 _hqCallsign = "DARK HORSE";             //Callsign for HQ element
 _airCallsign = "Grendel 1-4";           //Aircraft callsign
 _nightTimeOnly = false;                 //Is activity limited to night-time only sorties?
-_dawn = 6;                              //Dawn time (before this time, the aircraft will look for chemlights / IR strobes) - 0-24
-_dusk = 18;                             //Dusk time (before this time, the aicraft will look for smoke) - 0-24
 
 //Player options
 _necItem = "ItemRadio";                 //Required item to call for air support.
