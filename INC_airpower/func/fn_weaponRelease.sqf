@@ -28,8 +28,6 @@ _this spawn {
 
 					private ["_guideProjectile","_message","_laserObject","_ammoAvailable","_target","_speed","_perSecondChecks","_ordnance","_projectile","_travelTime","_relDirVer","_velocityX","_velocityY","_velocityZ","_velocityForCheck","_primaryTarget"];
 
-					_args params [["_launchPos",[0,0,15000]],["_primaryTarget",objNull],["_primaryLaunch",false],["_aircraftObject",APW_apTrig]];
-
 					_ordnance = "Bo_GBU12_LGB";
 					_speed = 200;
 
@@ -162,8 +160,6 @@ _this spawn {
 				case "missile": {
 
 					private ["_guideProjectile","_message","_laserObject","_ammoAvailable","_target","_speed","_perSecondChecks","_ordnance","_projectile","_travelTime","_relDirVer","_velocityX","_velocityY","_velocityZ","_velocityForCheck","_primaryTarget"];
-
-					_args params ["_launchPos","_primaryTarget",["_primaryLaunch",false],["_aircraftObject",APW_apTrig]];
 
 					_ordnance = "M_Scalpel_AT";
 					_speed = 450;
