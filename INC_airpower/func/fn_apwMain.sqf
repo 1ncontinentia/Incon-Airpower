@@ -120,6 +120,28 @@ switch (_operation) do {
 		_return = ((_bomb + _missile) >= 1);
 	};
 
+	case "AllowMultiTgt": {
+
+		private ["_missileTargets","_bombTargets","_multiTgtAmmo"];
+
+		_return = false;
+
+		_missileTargets = (count (_callingObject getVariable ["APW_targetArray",[]])) select {((_x getVariable "APW_ammoType") isEqualTo "missile")};
+
+		_bombTargets = (count (_callingObject getVariable ["APW_targetArray",[]])) select {((_x getVariable "APW_ammoType") isEqualTo "bomb")};
+
+		_multiTgtAmmo = ((_callingObject getVariable "APW_activeTarget") getVariable ["APW_ammoType","missile"]);
+
+		if (_multiTgtAmmo == "missile") then {_missileTargets = _missileTargets + 1} else {_bombTargets = _bombTargets + 1};
+
+		if ([_callingObject,"HasEnoughAmmo",["missile",(_missileTargets + 1)]] call APW_fnc_APWMain) then {_return = true};
+
+		if ([_callingObject,"HasEnoughAmmo",["bomb",(_bombTargets + 1)]] call APW_fnc_APWMain) then {_return = true};
+
+		_callingObject setVariable ["APW_multiTgtPoss"_return];
+
+	};
+
 	case "ThrowMarkerInstr": {
 
 		private ["_nearbyThrowArray","_isNight","_markerColour","_markerColourLwr"];
