@@ -52,7 +52,7 @@ if (missionNamespace getVariable ["APW_airAssetRequested",false]) exitWith {
 
 sleep 0.5;
 
-if (_fullVP) then {hqObject globalChat format ["%1: Request received, standby.",_hqCallsign]};
+hqObject globalChat format ["%1: Request received, standby.",_hqCallsign];
 
 if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= _dusk || daytime < _dawn)) && ((missionNamespace getVariable ["APW_sortiesLeft",_maxSorties]) > 0)) exitWith {
 
@@ -64,7 +64,7 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= _dusk || d
 
     missionNamespace setVariable ["APW_sortiesLeft",_sortiesLeft,true]; //Reduces the number of sorties left by 1
 
-	sleep (5 + (random 10));
+	sleep (5 + (random 5));
 
 	private _airpowerEta = (_minTimeOnTgt + (random _randomDelay));
 
@@ -80,7 +80,7 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= _dusk || d
     if (_fullVP) then {
         _hqObject globalChat format ["%1: %2, this is %3.",_airCallsign,(group _caller),_airCallsign];
 
-        sleep (4 + (random 4));
+        sleep (4 + (random 2));
 
         //Request auth
         _caller globalChat format ["%1, %2. Send traffic.",_airCallsign,(group _caller)];
@@ -113,41 +113,41 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= _dusk || d
 
         _caller globalChat format ["%1, %2, roger, ready authentication.",_airCallsign,(group _caller)];
 
-        sleep (4 + (random 4));
+        sleep (4 + (random 2));
 
         //Aircraft responds with authentication
         _hqObject globalChat format ["%1: Authenticate %3 %4.",_airCallsign,_airCallsign,(call _authKey),(call _authKey)];
 
-        sleep (4 + (random 4));
+        sleep (4 + (random 2));
 
         //FAC responds and authenticates
         _caller globalChat format ["%1 comes back %2. Authenticate %3 %4.",(group _caller),(call _authKey),(call _authKey),(call _authKey)];
 
-        sleep (4 + (random 4));
+        sleep (4 + (random 2));
 
         //Aircraft final auth
         _hqObject globalChat format ["%1: %2 comes back %3.",_airCallsign,_airCallsign,(call _authKey)];
 
 
-        sleep (4 + (random 4));
+        sleep (4 + (random 2));
 
         //FAC good auth
         _caller globalChat format ["Good authentication, send line-up %1.",_airCallsign];
 
-        sleep (8 + (random 6));
+        sleep (4 + (random 4));
 
     };
 
     //Lineup
     _hqObject globalChat format ["%1: %2 is mission number %3, 1 %4 at base plus %5.",_airCallsign,_airCallsign,(round (random 1000)),_aircraftType,(round random (_altitudeRandom/1000))];
 
-    sleep (8 + (random 6));
+    sleep (4 + (random 4));
 
     //Otherwise, say how many missiles remaining
     _hqObject globalChat format ["%1: Equipped with %2 GBU-12 LGB and %3 Hellfire LGM. Playtime %4, abort in the clear.",_airCallsign,_bomb,_missile,(round (_timeOnTarget/60))];
 
     if (_fullVP) then {
-        sleep 8;
+        sleep 4;
 
         //FAC good auth
         _caller globalChat format ["%1: Roger, abort in the clear. You've got base plus %2. %3 will call for CAS on radio Charlie if required. Out.",(group _caller),(round (_altitudeRandom/1000)),(group _caller)];
