@@ -9,10 +9,12 @@ if (!local _callingObject) exitWith {};
 
 _cdePass = true;
 
+//Initial chat only applies first time
 if (!_repeat) then {
 
-	//_callingObject globalChat "Standby for mark type.";
+	if (_fullVP) then {_callingObject globalChat format ["Standby for confirmation of target marker.",(mapGridPosition _callingObject)]};
 
+	sleep (1 + (random 2));
 };
 
 if ((daytime >= APW_sunset) || {daytime < APW_sunrise}) then {_isNight = true} else {_isNight = false};
@@ -165,6 +167,8 @@ if (typeName _stickyTarget == "OBJECT") then {
 
 		_hqObject globalChat format ["%1: Confirmed, engaging mark.",_airCallsign];
 	};
+} else {
+	_callingObject setVariable ["APW_stageProceed",true];
 };
 
 if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
