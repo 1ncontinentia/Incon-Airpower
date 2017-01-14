@@ -179,7 +179,10 @@ _secondaryTarget = "Land_HelipadEmpty_F" createVehicle [0,0,0];
 _secondaryTarget hideObjectGlobal true;
 
 switch (_stickyTargetActive) do {
-	case true: {_secondaryTarget attachTo [_stickyTarget, [0,0,1]]};
+	case true: {
+		_secondaryTarget attachTo [_stickyTarget, [0,0,1]];
+		_stickyTarget setVariable ["APW_targetObject",true];
+	};
 	case false: {_secondaryTarget setPosATL _defaultTargetPos;};
 };
 

@@ -33,6 +33,8 @@ switch (_operation) do {
 		_callingObject setVariable ["APW_activeTarget",nil];
 		_callingObject setVariable ["APW_multiTgtPoss",nil];
 
+		{_x setVariable ["APW_targetObject",nil]} forEach (((position _callingObject) nearEntities [["car","tank","helicopter","man"], 1500]) select {_x getVariable ["APW_targetObject",false]});
+
 		_return = true;
 	};
 
@@ -118,28 +120,6 @@ switch (_operation) do {
 		missionNamespace setVariable ["APW_ammoArray", _newAmmoCount, true];
 
 		_return = ((_bomb + _missile) >= 1);
-	};
-
-	case "AllowMultiTgt": {
-
-		private ["_missileTargets","_bombTargets","_multiTgtAmmo"];
-
-		_return = false;
-
-		_missileTargets = (count (_callingObject getVariable ["APW_targetArray",[]])) select {((_x getVariable "APW_ammoType") isEqualTo "missile")};
-
-		_bombTargets = (count (_callingObject getVariable ["APW_targetArray",[]])) select {((_x getVariable "APW_ammoType") isEqualTo "bomb")};
-
-		_multiTgtAmmo = ((_callingObject getVariable "APW_activeTarget") getVariable ["APW_ammoType","missile"]);
-
-		if (_multiTgtAmmo == "missile") then {_missileTargets = _missileTargets + 1} else {_bombTargets = _bombTargets + 1};
-
-		if ([_callingObject,"HasEnoughAmmo",["missile",(_missileTargets + 1)]] call APW_fnc_APWMain) then {_return = true};
-
-		if ([_callingObject,"HasEnoughAmmo",["bomb",(_bombTargets + 1)]] call APW_fnc_APWMain) then {_return = true};
-
-		_callingObject setVariable ["APW_multiTgtPoss"_return];
-
 	};
 
 	case "ThrowMarkerInstr": {
@@ -278,7 +258,7 @@ switch (_operation) do {
 		_stickyTargetArray = (
 			((position _primaryTarget) nearEntities [["car","tank","helicopter","man"], _radius]) select {
 				(side _x != _sideFriendly) &&
-				!{(_x in (_callingObject getVariable ["APW_targetArray",[]]))} &&
+				{!(_x getVariable ["APW_targetObject",false])} &&
 				{(!(_x isKindOf "Man") || {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])})}
 			}
 		);
@@ -302,7 +282,7 @@ switch (_operation) do {
 			((position _primaryTarget) nearEntities [["tank","helicopter","car"], _radius]) select {
 				(side _x != _sideFriendly) &&
 				{side _x != civilian} &&
-				!{(_x in (_callingObject getVariable ["APW_targetArray",[]]))} &&
+				{!(_x getVariable ["APW_targetObject",false])} &&
 				{(!(_x isKindOf "Man") || {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])})}
 			}
 		);
@@ -316,7 +296,7 @@ switch (_operation) do {
 				((position _primaryTarget) nearEntities [["man"], _radius]) select {
 					(side _x != _sideFriendly) &&
 					{side _x != civilian} &&
-					!{(_x in (_callingObject getVariable ["APW_targetArray",[]]))} &&
+					{!(_x getVariable ["APW_targetObject",false])} &&
 					{(!(_x isKindOf "Man") || {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])})}
 				}
 			);
