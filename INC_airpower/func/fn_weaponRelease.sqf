@@ -19,14 +19,16 @@ _this spawn {
 
 		case "autoGuideOrdnance": {
 
-			_args params [["_launchPos",[0,0,15000]],["_primaryTarget",objNull],["_primaryLaunch",false],["_aircraftObject",APW_apTrig]];
+			_args params [["_launchPos",[0,0,15000]],"_primaryTarget",["_primaryLaunch",false],["_aircraftObject",APW_apTrig]];
 
 			//Get ordnance type
 			switch (_primaryTarget getVariable ["APW_ammoType","missile"]) do {
 
 				case "bomb": {
 
-					private ["_guideProjectile","_message","_laserObject","_ammoAvailable","_target","_speed","_perSecondChecks","_ordnance","_projectile","_travelTime","_relDirVer","_velocityX","_velocityY","_velocityZ","_velocityForCheck","_primaryTarget"];
+					private ["_guideProjectile","_message","_laserObject","_ammoAvailable","_target","_speed","_perSecondChecks","_ordnance","_projectile","_travelTime","_relDirVer","_velocityX","_velocityY","_velocityZ","_velocityForCheck"];
+
+					[_callingObject,"SetAmmo",[_aircraftObject,"bomb",1]] call APW_fnc_APWMain;
 
 					_ordnance = "Bo_GBU12_LGB";
 					_speed = 200;
@@ -159,7 +161,9 @@ _this spawn {
 
 				case "missile": {
 
-					private ["_guideProjectile","_message","_laserObject","_ammoAvailable","_target","_speed","_perSecondChecks","_ordnance","_projectile","_travelTime","_relDirVer","_velocityX","_velocityY","_velocityZ","_velocityForCheck","_primaryTarget"];
+					private ["_guideProjectile","_message","_laserObject","_ammoAvailable","_target","_speed","_perSecondChecks","_ordnance","_projectile","_travelTime","_relDirVer","_velocityX","_velocityY","_velocityZ","_velocityForCheck"];
+
+					[_callingObject,"SetAmmo",[_aircraftObject,"missile",1]] call APW_fnc_APWMain;
 
 					_ordnance = "M_Scalpel_AT";
 					_speed = 450;
@@ -301,7 +305,7 @@ _this spawn {
 
 		case "strikeAftermath": {
 
-			_args params [["_ammoExpended",1],["_aircraftObject",APW_apTrig]];
+			_args params [["_ammoExpended",0],["_aircraftObject",APW_apTrig]];
 
 			private ["_strikeType"];
 

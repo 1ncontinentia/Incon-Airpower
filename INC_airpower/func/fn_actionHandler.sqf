@@ -275,20 +275,7 @@ switch (_operation) do {
 				_callingObject setVariable ["APW_multiTarget",true];
 				_callingObject setVariable ["APW_reconfirmStrike",false];
 
-			},[],5.5,true,true,"","((_this == _target) && {(_callingObject getVariable ['APW_multiTgtPoss'false])})"
-		];
-
-		APW_confirmTargetMultiRe = _callingObject addAction [
-			"<t color='#DC00FF'>Repeat last target mark</t>", {
-				_callingObject = _this select 0;
-				private _activeActions = (_callingObject getVariable "APW_activeActions");
-				{_callingObject removeAction _x} forEach _activeActions;
-				_callingObject setVariable ["APW_stageProceed",true];
-				_callingObject setVariable ["APW_abortStrike",false];
-				_callingObject setVariable ["APW_multiTarget",false];
-				_callingObject setVariable ["APW_reconfirmStrike",true];
-
-			},[],6,true,true,"","(_this == _target)"
+			},[],5.5,true,true,"","((_this == _target) && (_target getVariable ['APW_multiTgtPoss',false]))"
 		];
 
 		APW_cancelMultiTarget = _callingObject addAction [
@@ -303,54 +290,7 @@ switch (_operation) do {
 			},[],5,true,true,"","(_this == _target)"
 		];
 
-		_activeActions = [APW_confirmTargetMultiNeg,APW_confirmTargetMultiAff,APW_confirmTargetMultiRe,APW_cancelMultiTarget];
-
-		_callingObject setVariable ["APW_activeActions",_activeActions];
-
-		_return = ["APW_stageProceed","APW_abortStrike","APW_multiTarget","APW_reconfirmStrike"];
-	};
-
-	case "confirmCorrect": {
-
-		APW_confirmMarkCorrect = _callingObject addAction [
-			"<t color='#D8FF00'>Proceed with CAS</t>", {
-				_callingObject = _this select 0;
-				private _activeActions = (_callingObject getVariable "APW_activeActions");
-				{_callingObject removeAction _x} forEach _activeActions;
-				_callingObject setVariable ["APW_stageProceed",true];
-				_callingObject setVariable ["APW_abortStrike",false];
-				_callingObject setVariable ["APW_multiTarget",false];
-				_callingObject setVariable ["APW_reconfirmStrike",false];
-
-			},[],6,true,true,"","(_this == _target)"
-		];
-
-		APW_confirmMarkRe = _callingObject addAction [
-			"<t color='#DC00FF'>Repeat last target mark</t>", {
-				_callingObject = _this select 0;
-				private _activeActions = (_callingObject getVariable "APW_activeActions");
-				{_callingObject removeAction _x} forEach _activeActions;
-				_callingObject setVariable ["APW_stageProceed",true];
-				_callingObject setVariable ["APW_abortStrike",false];
-				_callingObject setVariable ["APW_multiTarget",false];
-				_callingObject setVariable ["APW_reconfirmStrike",true];
-
-			},[],5.5,true,true,"","(_this == _target)"
-		];
-
-		APW_cancelMarkTarget = _callingObject addAction [
-			"<t color='#FF0000'>Abort CAS Mission</t>", {
-				_callingObject = _this select 0;
-				private _activeActions = (_callingObject getVariable "APW_activeActions");
-				{_callingObject removeAction _x} forEach _activeActions;
-				_callingObject setVariable ["APW_stageProceed",true];
-				_callingObject setVariable ["APW_abortStrike",true];
-				_callingObject setVariable ["APW_multiTarget",nil];
-				_callingObject setVariable ["APW_reconfirmStrike",false];
-			},[],5,true,true,"","(_this == _target)"
-		];
-
-		_activeActions = [APW_confirmMarkCorrect,APW_confirmMarkRe,APW_cancelMarkTarget];
+		_activeActions = [APW_confirmTargetMultiNeg,APW_confirmTargetMultiAff,APW_cancelMultiTarget];
 
 		_callingObject setVariable ["APW_activeActions",_activeActions];
 
@@ -365,9 +305,32 @@ switch (_operation) do {
 
 		_ammoArray params ["_bombCount","_missileCount"];
 
+		private ["_missileTargets","_bombTargets","_multiTgtAmmo","_multiTgtPoss"];
+
+		_missileTargets = (count ((_callingObject getVariable ["APW_targetArray",[]]) select {(((_x getVariable "APW_ammoType") find "missile") >= 0)}));
+
+		_bombTargets = (count ((_callingObject getVariable ["APW_targetArray",[]]) select {(((_x getVariable "APW_ammoType") find "bomb") >= 0)}));
+
 		_actionArray = [];
 
-		if (_bombCount >= 1) then {
+		if ([_callingObject,"HasEnoughAmmo",["missile",(_missileTargets + 1)]] call APW_fnc_APWMain) then {
+
+			APW_selectMissile = _callingObject addAction [
+				"<t color='#00FFC9'>Request Missile</t>", {
+					_callingObject = _this select 0;
+					private _ammoActions = (_callingObject getVariable "APW_ammoActionArray");
+					{_callingObject removeAction _x} forEach _ammoActions;
+					private _target = (_callingObject getVariable "APW_activeTarget");
+					_callingObject setVariable ["APW_stageProceed",true];
+					_callingObject setVariable ["APW_abortStrike",false];
+					_target setVariable ["APW_ammoType","missile"];
+
+				},[],6,true,true,"","(_this == _target)"
+			];
+			_actionArray pushBack APW_selectMissile;
+		};
+
+		if ([_callingObject,"HasEnoughAmmo",["bomb",(_bombTargets + 1)]] call APW_fnc_APWMain) then {
 
 			APW_selectBomb = _callingObject addAction [
 				"<t color='#FFDC00'>Request Bomb</t>", {
@@ -382,22 +345,6 @@ switch (_operation) do {
 				},[],6,true,true,"","(_this == _target)"
 			];
 			_actionArray pushBack APW_selectBomb;
-		};
-
-		if (_missileCount >= 1) then {
-
-			APW_selectMissile = _callingObject addAction [
-				"<t color='#00FFC9'>Request Missile</t>", {
-					_callingObject = _this select 0;
-					private _ammoActions = (_callingObject getVariable "APW_ammoActionArray");
-					{_callingObject removeAction _x} forEach _ammoActions;
-					_callingObject setVariable ["APW_stageProceed",true];
-					_callingObject setVariable ["APW_abortStrike",false];
-					_callingObject setVariable ["APW_ammoType","missile"];
-
-				},[],6,true,true,"","(_this == _target)"
-			];
-			_actionArray pushBack APW_selectMissile;
 		};
 
 		if ((_bombCount + _missileCount) >= 1) then {
@@ -430,10 +377,10 @@ switch (_operation) do {
 		APW_selectGuidance1 = _callingObject addAction [
 			"Engage detected unit", {
 				_callingObject = _this select 0;
-				noStickyTarget = false;
 				private _activeActions = (_callingObject getVariable "APW_activeActions");
 				{_callingObject removeAction _x} forEach _activeActions;
 				_callingObject setVariable ["APW_stageProceed",true];
+				_callingObject setVariable ["APW_reconfirmStrike",false];
 				_callingObject setVariable ["APW_abortStrike",false];
 				_callingObject setVariable ["APW_stickyTarget",true];
 
@@ -446,10 +393,24 @@ switch (_operation) do {
 				private _activeActions = (_callingObject getVariable "APW_activeActions");
 				{_callingObject removeAction _x} forEach _activeActions;
 				_callingObject setVariable ["APW_stageProceed",true];
+				_callingObject setVariable ["APW_reconfirmStrike",false];
 				_callingObject setVariable ["APW_abortStrike",false];
 				_callingObject setVariable ["APW_stickyTarget",false];
 
 			},[],6,true,true,"","(_this == _target)"
+		];
+
+		APW_selectGuidance3 = _callingObject addAction [
+			"<t color='#DC00FF'>Repeat target mark</t>", {
+				_callingObject = _this select 0;
+				private _activeActions = (_callingObject getVariable "APW_activeActions");
+				{_callingObject removeAction _x} forEach _activeActions;
+				_callingObject setVariable ["APW_stageProceed",true];
+				_callingObject setVariable ["APW_reconfirmStrike",true];
+				_callingObject setVariable ["APW_abortStrike",false];
+				_callingObject setVariable ["APW_stickyTarget",false];
+
+			},[],5,true,true,"","(_this == _target)"
 		];
 
 		APW_cancelStickyTarget = _callingObject addAction [
@@ -458,17 +419,63 @@ switch (_operation) do {
 				private _activeActions = (_callingObject getVariable "APW_activeActions");
 				{_callingObject removeAction _x} forEach _activeActions;
 				_callingObject setVariable ["APW_stageProceed",true];
+				_callingObject setVariable ["APW_reconfirmStrike",nil];
 				_callingObject setVariable ["APW_abortStrike",true];
 				_callingObject setVariable ["APW_stickyTarget",nil];
 
 			},[],5,true,true,"","(_this == _target)"
 		];
 
-		_activeActions = [APW_selectGuidance1,APW_selectGuidance2,APW_cancelStickyTarget];
+		_activeActions = [APW_selectGuidance1,APW_selectGuidance2,APW_selectGuidance3,APW_cancelStickyTarget];
 
 		_callingObject setVariable ["APW_activeActions",_activeActions];
 
 		_return = ["APW_stageProceed","APW_abortStrike","APW_ammoType","APW_ammoActionArray"];
+	};
+
+	case "NonStickyTargetConfirm": {
+
+		APW_markConfirm1 = _callingObject addAction [
+			"<t color='#FFFC33'>Engage detected mark</t>", {
+				_callingObject = _this select 0;
+				private _activeActions = (_callingObject getVariable "APW_activeActions");
+				{_callingObject removeAction _x} forEach _activeActions;
+				_callingObject setVariable ["APW_stageProceed",true];
+				_callingObject setVariable ["APW_reconfirmStrike",false];
+				_callingObject setVariable ["APW_abortStrike",false];
+
+			},[],6,true,true,"","(_this == _target)"
+		];
+
+		APW_markConfirm2 = _callingObject addAction [
+			"<t color='#DC00FF'>Repeat target mark</t>", {
+				_callingObject = _this select 0;
+				private _activeActions = (_callingObject getVariable "APW_activeActions");
+				{_callingObject removeAction _x} forEach _activeActions;
+				_callingObject setVariable ["APW_stageProceed",true];
+				_callingObject setVariable ["APW_reconfirmStrike",true];
+				_callingObject setVariable ["APW_abortStrike",false];
+
+			},[],5,true,true,"","(_this == _target)"
+		];
+
+		APW_cancelMarkConfirm = _callingObject addAction [
+			"<t color='#FF0000'>Abort CAS Mission</t>", {
+				_callingObject = _this select 0;
+				private _activeActions = (_callingObject getVariable "APW_activeActions");
+				{_callingObject removeAction _x} forEach _activeActions;
+				_callingObject setVariable ["APW_stageProceed",true];
+				_callingObject setVariable ["APW_reconfirmStrike",nil];
+				_callingObject setVariable ["APW_abortStrike",true];
+
+			},[],5,true,true,"","(_this == _target)"
+		];
+
+		_activeActions = [APW_markConfirm1,APW_markConfirm2,APW_cancelMarkConfirm];
+
+		_callingObject setVariable ["APW_activeActions",_activeActions];
+
+		_return = ["APW_markConfirm1","APW_markConfirm2","APW_cancelMarkConfirm"];
 	};
 };
 

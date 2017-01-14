@@ -87,11 +87,11 @@ switch (count _nearLaserArray == 1) do {
 //=======================================================================//
 private _defaultTargetPos = [((getPosATL _primaryTarget select 0) + (random 1) - (random 2)), ((getPosATL _primaryTarget select 1) + (random 1) - (random 2)),0];
 
+sleep 1;
+
 _stickyTargetActive = false;
 
 _stickyTarget = [_callingObject,"StickyTarget",[_primaryTarget]] call APW_fnc_APWMain;
-
-sleep 2;
 
 //If there's a sticky target present, give option to target that instead and update default target pos if so
 if (typeName _stickyTarget == "OBJECT") then {
@@ -116,12 +116,10 @@ if (typeName _stickyTarget == "OBJECT") then {
 	waitUntil {
 		sleep 1;
 		_i = (_i + 1);
-		((_callingObject getVariable ["APW_stageProceed",false]) || (_i > _timeout) || (!alive _callingObject))
+		((_callingObject getVariable ["APW_stageProceed",false]) || {_i > _timeout} || {!alive _callingObject})
 	};
 
-	if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {};
-
-	if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {};
+	if (!(_callingObject getVariable ["APW_stageProceed",false]) || {_callingObject getVariable ["APW_abortStrike",false]} || (_callingObject getVariable ["APW_reconfirmStrike",false])) exitWith {};
 
 	//If unit hasn't aborted and wants to track, confirm tracking and update targets
 	if (_callingObject getVariable ["APW_stickyTarget",false]) then {
@@ -147,16 +145,35 @@ if (typeName _stickyTarget == "OBJECT") then {
 		_defaultTargetPos = [(getPosATL _primaryTarget select 0) + (random 5), (getPosATL _primaryTarget select 1) + (random 5),(getPosATL _primaryTarget select 2) + 2];
 	} else {
 
-		if (_fullVP) then {_callingObject globalChat "Engage mark position."};
+		_callingObject setVariable ["APW_stageProceed",true];
+
+		if (_fullVP) then {
+			_callingObject globalChat "Engage mark position."; sleep 1.5;
+		};
+
+		_hqObject globalChat format ["%1: Wilco, engaging mark.",_airCallsign];
+	};
+} else {
+
+	_hqObject globalChat format ["%1: Spot. Confirm target.",_airCallsign];
+
+	[_callingObject,"NonStickyTargetConfirm"] call APW_fnc_actionHandler;
+
+	//Hold until choice made
+	private _i = 0;
+	waitUntil {
+		sleep 1;
+		_i = (_i + 1);
+		((_callingObject getVariable ["APW_stageProceed",false]) || {_i > _timeout} || {!alive _callingObject})
+	};
+
+	if ((_callingObject getVariable ["APW_stageProceed",false]) && {!(_callingObject getVariable ["APW_abortStrike",false])} && {!(_callingObject getVariable ["APW_reconfirmStrike",false])}) then {
+		if (_fullVP) then {_callingObject globalChat "Laser mark confirmed."};
 
 		sleep 1.5;
 
 		if (_fullVP) then {_hqObject globalChat format ["%1: Wilco, engaging mark.",_airCallsign]};
 	};
-} else {
-
-	_callingObject setVariable ["APW_stageProceed",true];
-	_hqObject globalChat format ["%1: Spot.",_airCallsign];
 };
 
 if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
@@ -174,6 +191,16 @@ if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
 	[_callingObject,"AbortStrike"] call APW_fnc_APWMain;
 };
 
+//Reconfirm mark
+if (_callingObject getVariable ["APW_reconfirmStrike",false]) exitWith {
+	_callingObject setVariable ["APW_reconfirmStrike",nil];
+	_callingObject globalChat "Cancel my last mark.";
+	sleep 1;
+	_hqObject globalChat format ["%1: Roger, scanning for new mark.",_airCallsign];
+	[[_callingObject,_hqObject,true,true], 'INC_airpower\scripts\markLaser.sqf'] remoteExec ['execVM',player];
+};
+
+//=======================================================================//
 
 _secondaryTarget = "Land_HelipadEmpty_F" createVehicle [0,0,0];
 _secondaryTarget hideObjectGlobal true;
@@ -186,11 +213,16 @@ switch (_stickyTargetActive) do {
 	case false: {_secondaryTarget setPosATL _defaultTargetPos;};
 };
 
+
+
 _primaryTarget = _secondaryTarget;
 
 //Select ammo
 //=======================================================================//
 _callingObject setVariable ["APW_activeTarget",_primaryTarget];
+
+sleep 0.5;
+
 [_callingObject,"SelectAmmo"] call APW_fnc_actionHandler;
 
 //Hold until choice made
@@ -220,7 +252,27 @@ if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
 
 //Multiple target option
 //=======================================================================//
-[_callingObject,"AllowMultiTgt"] call APW_fnc_actionHandler;
+
+private ["_missileTargets","_bombTargets","_multiTgtAmmo","_multiTgtPoss"];
+
+_multiTgtPoss = false;
+
+_missileTargets = (count ((_callingObject getVariable ["APW_targetArray",[]]) select {(((_x getVariable "APW_ammoType") find "missile") >= 0)}));
+
+_bombTargets = (count ((_callingObject getVariable ["APW_targetArray",[]]) select {(((_x getVariable "APW_ammoType") find "bomb") >= 0)}));
+
+_multiTgtAmmo = ((_callingObject getVariable "APW_activeTarget") getVariable "APW_ammoType");
+
+sleep 0.1;
+
+if (_multiTgtAmmo == "missile") then {_missileTargets = _missileTargets + 1} else {_bombTargets = _bombTargets + 1};
+
+if ([_callingObject,"HasEnoughAmmo",["missile",(_missileTargets + 1)]] call APW_fnc_APWMain) then {_multiTgtPoss = true};
+
+if ([_callingObject,"HasEnoughAmmo",["bomb",(_bombTargets + 1)]] call APW_fnc_APWMain) then {_multiTgtPoss = true};
+
+_callingObject setVariable ["APW_multiTgtPoss",_multiTgtPoss];
+
 
 sleep 0.5;
 
@@ -240,15 +292,11 @@ if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
 
 _callingObject setVariable ["APW_stageProceed",false];
 
-if (_callingObject getVariable ["APW_reconfirmStrike",false]) exitWith {
-	_callingObject setVariable ["APW_reconfirmStrike",nil];
-	_callingObject globalChat "Cancel my last mark.";
-	sleep 1;
-	_hqObject globalChat format ["%1: Roger, scanning for new mark.",_airCallsign];
-	[[_callingObject,_hqObject,true,true], 'INC_airpower\scripts\markLaser.sqf'] remoteExec ['execVM',player];
-};
+sleep 0.1; 
 
 if (_preStrikeCDE) then {_cdePass = [_callingObject,"DamageEstimate",[_primaryTarget,_hqObject]] call APW_fnc_APWMain};
+
+sleep 0.5;
 
 //Add target to array if it passes the CDE
 if (_cdePass) then {
@@ -274,9 +322,9 @@ if (_callingObject getVariable ["APW_multiTarget",false]) exitWith {
 
 //Continuing if no additional target requested, otherwise script restarts with previous secondary target saved in object var "APW_targetArray"
 //=======================================================================//
-sleep 3;
+sleep 1;
 
-if (_fullVP) then {_callingObject globalChat format ["Restrictions per ROE. Ground commander's intent is to destroy marked targets with a %1.",(_primaryTarget getVariable ["APW_ammoType","missile"])]};
+if (_fullVP) then {_callingObject globalChat format ["Restrictions per ROE. Ground commander's intent is to destroy marked targets.",(_primaryTarget getVariable "APW_ammoType")]};
 
 if !(_stickyTargetActive) then {
 	[_callingObject,_primaryTarget,_defaultTargetPos] spawn {
@@ -402,7 +450,6 @@ if (_callingObject getVariable ["APW_abortStrike",false]) exitWith {
 
 _callingObject globalChat format ["%1, you are cleared to engage.",_airCallsign];
 
-
 sleep (1 + (random 3));
 
 //Launch countdown
@@ -419,13 +466,11 @@ _launchPos = ([(_launchPos2d select 0), (_launchPos2d select 1), (_altitudeMin +
 
 private ["_missileTargets","_bombTargets","_primaryLaunch"];
 
-_missileTargets = (_callingObject getVariable ["APW_targetArray",[]]) select {((_x getVariable "APW_ammoType") isEqualTo "missile")};
+_missileTargets = ((_callingObject getVariable ["APW_targetArray",[]]) select {(((_x getVariable ["APW_ammoType","missile"]) find "missile") >= 0)});
 
-_bombTargets = (_callingObject getVariable ["APW_targetArray",[]]) select {((_x getVariable "APW_ammoType") isEqualTo "bomb")};
+_bombTargets = ((_callingObject getVariable ["APW_targetArray",[]]) select {(((_x getVariable ["APW_ammoType","missile"]) find "bomb") >= 0)});
 
 if ((count _missileTargets != 0) && (count _bombTargets != 0)) then {};
-
-
 
 //Launch bombs first
 if (count _bombTargets != 0) then {
@@ -483,7 +528,7 @@ _callingObject setVariable ["APW_activeTarget",objNull];
 _callingObject removeAction _abortAction;
 
 //Post-strike dialogue
-[_callingObject,"strikeAftermath",[(count _targetArray)]] call APW_fnc_weaponRelease;
+[_callingObject,"strikeAftermath"] call APW_fnc_weaponRelease;
 
 sleep 10;
 
