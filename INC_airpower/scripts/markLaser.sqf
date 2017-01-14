@@ -292,7 +292,7 @@ if !(_callingObject getVariable ["APW_stageProceed",false]) exitWith {
 
 _callingObject setVariable ["APW_stageProceed",false];
 
-sleep 0.1; 
+sleep 0.1;
 
 if (_preStrikeCDE) then {_cdePass = [_callingObject,"DamageEstimate",[_primaryTarget,_hqObject]] call APW_fnc_APWMain};
 
@@ -418,7 +418,7 @@ private _i = 0;
 waitUntil {
 	sleep 1;
 	_i = (_i + 1);
-	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > (_timeout * 13)) || (!alive _callingObject))
+	((_callingObject getVariable ["APW_stageProceed",false]) || (_i > (_timeout * 15)) || (!alive _callingObject))
 };
 
 if !(_callingObject getVariable ["APW_stageProceed",false]) then {

@@ -435,18 +435,6 @@ switch (_operation) do {
 
 	case "NonStickyTargetConfirm": {
 
-		APW_markConfirm1 = _callingObject addAction [
-			"<t color='#FFFC33'>Engage detected mark</t>", {
-				_callingObject = _this select 0;
-				private _activeActions = (_callingObject getVariable "APW_activeActions");
-				{_callingObject removeAction _x} forEach _activeActions;
-				_callingObject setVariable ["APW_stageProceed",true];
-				_callingObject setVariable ["APW_reconfirmStrike",false];
-				_callingObject setVariable ["APW_abortStrike",false];
-
-			},[],6,true,true,"","(_this == _target)"
-		];
-
 		APW_markConfirm2 = _callingObject addAction [
 			"<t color='#DC00FF'>Repeat target mark</t>", {
 				_callingObject = _this select 0;
@@ -456,7 +444,19 @@ switch (_operation) do {
 				_callingObject setVariable ["APW_reconfirmStrike",true];
 				_callingObject setVariable ["APW_abortStrike",false];
 
-			},[],5,true,true,"","(_this == _target)"
+			},[],6,true,true,"","(_this == _target)"
+		];
+
+		APW_markConfirm1 = _callingObject addAction [
+			"<t color='#FFFC33'>Engage detected mark</t>", {
+				_callingObject = _this select 0;
+				private _activeActions = (_callingObject getVariable "APW_activeActions");
+				{_callingObject removeAction _x} forEach _activeActions;
+				_callingObject setVariable ["APW_stageProceed",true];
+				_callingObject setVariable ["APW_reconfirmStrike",false];
+				_callingObject setVariable ["APW_abortStrike",false];
+
+			},[],5.5,true,true,"","(_this == _target)"
 		];
 
 		APW_cancelMarkConfirm = _callingObject addAction [
