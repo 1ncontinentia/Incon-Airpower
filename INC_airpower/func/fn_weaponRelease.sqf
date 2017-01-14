@@ -19,7 +19,7 @@ _this spawn {
 
 		case "autoGuideOrdnance": {
 
-			_args params [["_launchPos",[0,0,15000]],"_primaryTarget",["_primaryLaunch",false],["_aircraftObject",APW_apTrig]];
+			_args params [["_launchPos",[0,0,15000]],"_primaryTarget",["_primaryLaunch",false],["_delayedLaunch",false],["_aircraftObject",APW_apTrig]];
 
 			//Get ordnance type
 			switch (_primaryTarget getVariable ["APW_ammoType","missile"]) do {
@@ -75,7 +75,7 @@ _this spawn {
 
 						[_hqObject,_airCallsign,_travelTime] spawn {
 							params ["_hqObject","_airCallsign","_travelTime"];
-							if (_travelTime > 10) then {
+							if ((_travelTime > 10) && (!_delayedLaunch)) then {
 								sleep (_travelTime - 5);
 								_hqObject globalChat format ["%1: 5 seconds.",_airCallsign];
 							};
@@ -140,7 +140,7 @@ _this spawn {
 
 					sleep (random 1);
 
-					if (!(_callingObject getVariable ["APW_abortStrike",false]) && {_primaryLaunch}) then {_hqObject globalChat format ["%1: Splash.",_airCallsign]};
+					if (!(_callingObject getVariable ["APW_abortStrike",false]) && {_primaryLaunch} && {!(_delayedLaunch)}) then {_hqObject globalChat format ["%1: Splash.",_airCallsign]};
 
 					deleteVehicle _laserObject;
 
@@ -182,7 +182,7 @@ _this spawn {
 
 						[_hqObject,_airCallsign,_travelEstimate] spawn {
 							params ["_hqObject","_airCallsign","_travelTime"];
-							if (_travelTime > 10) then {
+							if ((_travelTime > 10) && (!_delayedLaunch)) then {
 								sleep (_travelTime - 5);
 								_hqObject globalChat format ["%1: 5 seconds.",_airCallsign];
 							};
@@ -282,7 +282,7 @@ _this spawn {
 
 					sleep (random 1);
 
-					if (!(_callingObject getVariable ["APW_abortStrike",false]) && {_primaryLaunch}) then {_hqObject globalChat format ["%1: Splash.",_airCallsign]};
+					if (!(_callingObject getVariable ["APW_abortStrike",false]) && {_primaryLaunch} && {!(_delayedLaunch)}) then {_hqObject globalChat format ["%1: Splash.",_airCallsign]};
 
 					deleteVehicle _laserObject;
 

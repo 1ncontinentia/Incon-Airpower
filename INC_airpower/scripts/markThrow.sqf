@@ -331,14 +331,18 @@ if (_callingObject getVariable ["APW_multiTarget",false]) exitWith {
 //Continuing if no additional target requested, otherwise script restarts with previous secondary target saved in object var "APW_targetArray"
 //=======================================================================//
 
+if (_fullVP) then {
+	switch ((count (player getVariable ["APW_targetArray",[]])) > 1) do {
+		case true: {
+			_callingObject globalChat format ["Restrictions per ROE. Ground commander's intent is to destroy marked targets with a coordinated strike.",(_callingObject getVariable ["APW_ammoType","missile"])];
+		};
+		case false: {
+			_callingObject globalChat format ["Restrictions per ROE. Ground commander's intent is to destroy marked target with a %1.",(_callingObject getVariable ["APW_ammoType","missile"])];
+		};
+	};
+};
 
-
-if (_fullVP) then {_callingObject globalChat format ["Restrictions per ROE. Ground commander's intent is to destroy marked targets.",(_primaryTarget getVariable "APW_ammoType")]};
-
-
-sleep 5;
-
-
+sleep 3;
 
 if (_preStrikeCDE) then {
 	_hqObject globalChat format ["%1: Roger, restrictions per ROE. Conducting collateral damage assessment, standby.",_airCallsign];
@@ -453,13 +457,15 @@ sleep (1.2 + (random 0.5));
 _launchPos2d = ([(getPosWorld _callingObject),_radius] call CBA_fnc_Randpos);
 _launchPos = ([(_launchPos2d select 0), (_launchPos2d select 1), (_altitudeMin + (random _altitudeRandom))]);
 
-private ["_missileTargets","_bombTargets","_primaryLaunch"];
+private ["_missileTargets","_bombTargets","_primaryLaunch","_delayedMissiles"];
 
 _missileTargets = ((_callingObject getVariable ["APW_targetArray",[]]) select {(((_x getVariable ["APW_ammoType","missile"]) find "missile") >= 0)});
 
 _bombTargets = ((_callingObject getVariable ["APW_targetArray",[]]) select {(((_x getVariable ["APW_ammoType","missile"]) find "bomb") >= 0)});
 
 if ((count _missileTargets != 0) && (count _bombTargets != 0)) then {};
+
+_delayedMissiles = ((count _missileTargets != 0) && (count _bombTargets != 0));
 
 //Launch bombs first
 if (count _bombTargets != 0) then {
@@ -479,8 +485,9 @@ if (count _bombTargets != 0) then {
 };
 
 //Delay missile launch until ready for simultaneous strike
-if ((count _missileTargets != 0) && (count _bombTargets != 0)) then {
+if (_delayedMissiles) then {
 	private ["_bombTime","_missileTime"];
+	_delayedMissiles = true;
 	_bombTime = (_launchPos distance (_bombTargets select 0)) / 200;
 	_missileTime = (_launchPos distance (_missileTargets select 0)) / 450;
 	sleep (_bombTime - _missileTime);
@@ -490,7 +497,7 @@ if (count _missileTargets != 0) then {
 
 	private _primaryLaunch = _missileTargets select 0;
 
-	[_callingObject,"autoGuideOrdnance",[_launchPos,_primaryLaunch,true]] call APW_fnc_weaponRelease;
+	[_callingObject,"autoGuideOrdnance",[_launchPos,_primaryLaunch,true,_delayedMissiles]] call APW_fnc_weaponRelease;
 
 	sleep 0.5;
 
