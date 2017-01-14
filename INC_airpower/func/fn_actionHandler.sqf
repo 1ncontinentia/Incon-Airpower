@@ -219,8 +219,8 @@ switch (_operation) do {
 			},[],6,true,true,"","(_this == _target)"
 		];
 
-		APW_confirmTargetThrow = _callingObject addAction [
-			"<t color='#00FFD4'>Mark target with smoke / chemlight</t>", {
+		APW_confirmTargetThrowDay = _callingObject addAction [
+			"<t color='#00FFD4'>Mark target with smoke</t>", {
 				_callingObject = _this select 0;
 				private _activeActions = (_callingObject getVariable "APW_activeActions");
 				{_callingObject removeAction _x} forEach _activeActions;
@@ -228,7 +228,19 @@ switch (_operation) do {
 				_callingObject setVariable ["APW_abortStrike",false];
 				_callingObject setVariable ["APW_markType","thrown"];
 
-			},[],6,true,true,"","(_this == _target)"
+			},[],6,true,true,"","(_this == _target) && !(daytime >= APW_sunset || daytime <= APW_sunrise) "
+		];
+
+		APW_confirmTargetThrowNight = _callingObject addAction [
+			"<t color='#00FFD4'>Mark target with chemlight / IR marker</t>", {
+				_callingObject = _this select 0;
+				private _activeActions = (_callingObject getVariable "APW_activeActions");
+				{_callingObject removeAction _x} forEach _activeActions;
+				_callingObject setVariable ["APW_stageProceed",true];
+				_callingObject setVariable ["APW_abortStrike",false];
+				_callingObject setVariable ["APW_markType","thrown"];
+
+			},[],6,true,true,"","(_this == _target) && (daytime >= APW_sunset || daytime <= APW_sunrise) "
 		];
 
 		APW_cancelStrikeRequest = _callingObject addAction [
@@ -243,7 +255,7 @@ switch (_operation) do {
 			},[],5,true,true,"","(_this == _target)"
 		];
 
-		_activeActions = [APW_confirmTargetLaser,APW_confirmTargetThrow,APW_cancelStrikeRequest];
+		_activeActions = [APW_confirmTargetLaser,APW_confirmTargetThrowDay,APW_confirmTargetThrowNight,APW_cancelStrikeRequest];
 
 		_callingObject setVariable ["APW_activeActions",_activeActions];
 
