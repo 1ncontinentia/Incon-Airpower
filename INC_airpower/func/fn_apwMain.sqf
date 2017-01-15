@@ -33,7 +33,7 @@ switch (_operation) do {
 		_callingObject setVariable ["APW_activeTarget",nil];
 		_callingObject setVariable ["APW_multiTgtPoss",nil];
 
-		{_x setVariable ["APW_targetObject",nil]} forEach (((position _callingObject) nearEntities [["car","tank","helicopter","man"], 1500]) select {_x getVariable ["APW_targetObject",false]});
+		{_x setVariable ["APW_targetObject",nil]} forEach (((position _callingObject) nearEntities [["car","tank","helicopter","Motorcycle","man"], 1500]) select {_x getVariable ["APW_targetObject",false]});
 
 		_return = true;
 	};
