@@ -33,7 +33,7 @@ switch (_operation) do {
 		_callingObject setVariable ["APW_activeTarget",nil];
 		_callingObject setVariable ["APW_multiTgtPoss",nil];
 
-		{_x setVariable ["APW_targetObject",nil]} forEach (((position _callingObject) nearEntities [["car","tank","helicopter","man"], 1500]) select {_x getVariable ["APW_targetObject",false]});
+		{_x setVariable ["APW_targetObject",nil]} forEach (((position _callingObject) nearEntities [["Man", "Air", "LandVehicle", "Ship"], 1500]) select {_x getVariable ["APW_targetObject",false]});
 
 		_return = true;
 	};
@@ -256,7 +256,7 @@ switch (_operation) do {
 		private ["_stickyTargetArray","_stickyTarget"];
 
 		_stickyTargetArray = (
-			((position _primaryTarget) nearEntities [["car","tank","helicopter","man"], _radius]) select {
+			((position _primaryTarget) nearEntities [["Man", "Air", "LandVehicle","Ship"], _radius]) select {
 				(side _x != _sideFriendly) &&
 				{!(_x getVariable ["APW_targetObject",false])} &&
 				{(!(_x isKindOf "Man") || {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])})}
@@ -279,7 +279,7 @@ switch (_operation) do {
 		private ["_stickyTargetArray","_stickyTarget"];
 
 		_stickyTargetArray = (
-			((position _primaryTarget) nearEntities [["tank","helicopter","car"], _radius]) select {
+			((position _primaryTarget) nearEntities [["Air", "LandVehicle", "Ship"], _radius]) select {
 				(side _x != _sideFriendly) &&
 				{side _x != civilian} &&
 				{!(_x getVariable ["APW_targetObject",false])} &&
@@ -367,7 +367,7 @@ switch (_operation) do {
 			if (side _x == _sideFriendly) then {
 				_nearbyFriendlies pushBack _x;
 			};
-		} foreach (((position _primaryTarget) nearEntities [["Man", "Car", "Motorcycle"], _killRadius]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
+		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "LandVehicle","Ship"], _killRadius]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
 
 		if (count _nearbyFriendlies != 0) exitWith {
 			_return = false;
@@ -378,7 +378,7 @@ switch (_operation) do {
 			if (side _x == civilian) then {
 				_nearbyCollateral pushBack _x;
 			};
-		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "Car", "Motorcycle", "Tank"], _killRadius]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
+		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "LandVehicle","Ship"], _killRadius]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
 
 		if (count _nearbyCollateral > _maxCollateral) exitWith {
 			_return = false;
@@ -389,7 +389,7 @@ switch (_operation) do {
 			if (_x getVariable ["APW_sensetiveTarget",false]) then {
 				_nearbySensitive pushBack _x;
 			};
-		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "Car", "Motorcycle", "Tank"], _distFromSensitive]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
+		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "LandVehicle","Ship"], _distFromSensitive]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
 
 		if ((count _nearbySensitive != 0) && {!(_allowSensitive)}) exitWith {
 			_return = false;
@@ -411,7 +411,7 @@ switch (_operation) do {
 			if (side _x == _sideFriendly) then {
 				_nearbyFriendlies pushBack _x;
 			};
-		} foreach (((position _primaryTarget) nearEntities [["Man", "Car", "Motorcycle"], _killRadius]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
+		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "LandVehicle","Ship"], _killRadius]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
 
 		if (count _nearbyFriendlies != 0) exitWith {
 			if (count _nearbyFriendlies >= 1) then {
@@ -427,7 +427,7 @@ switch (_operation) do {
 			if ((side _x == civilian) && {(((str typeOf _x) find "Rabbit") == -1)} && {(((str typeOf _x) find "Snake") == -1)} && {(((str typeOf _x) find "Bird") == -1)}) then {
 				_nearbyCollateral pushBack _x;
 			};
-		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "Car", "Motorcycle", "Tank"], _killRadius]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
+		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "LandVehicle","Ship"], _killRadius]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
 
 		if (count _nearbyCollateral > _maxCollateral) exitWith {
 			if (count _nearbyCollateral >= 1) then {
@@ -443,7 +443,7 @@ switch (_operation) do {
 			if (_x getVariable ["APW_sensetiveTarget",false]) then {
 				_nearbySensitive pushBack _x;
 			};
-		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "Car", "Motorcycle", "Tank"], _distFromSensitive]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
+		} foreach (((position _primaryTarget) nearEntities [["Man", "Air", "LandVehicle","Ship"], _distFromSensitive]) select {((lineIntersectsObjs [(getposASL _x), [(getposASL _x select 0),(getposASL _x select 1),((getposASL _x select 2) + 20)]]) isEqualTo [])});
 
 		if ((count _nearbySensitive != 0) && {!(_allowSensitive)}) exitWith {
 			_hqObject globalChat format ["%1: Be advised, there are sensitive targets in the AO.",_airCallsign];
