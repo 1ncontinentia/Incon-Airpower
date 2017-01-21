@@ -1,4 +1,4 @@
-# INC_airpower
+# INCON Airpower
 
 Script package for Arma 3 mission makers that allows players to call in air support for target tracking and air strikes.
 Unlike other CAS scripts, Incon Airpower simulates high-altitude strikes where the aircraft is neither visible nor audible from the ground.
