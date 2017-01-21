@@ -189,19 +189,7 @@ switch (_operation) do {
 
 						_nearbyThrowArray = (nearestObjects [getPosATL _callingObject, [], 400]) select {
 
-							(((str typeOf _x) find "Smoke") >= 0) ||
-
-							{
-								(((str typeOf _x) find "rhs_") >= 0) &&
-
-								{
-									(((str typeOf _x) find "white") >= 0) ||
-									{(((str typeOf _x) find "an_m8hc") >= 0)}
-								} &&
-
-								{!(((str typeOf _x) find "racer") >= 0)}
-
-							};
+							(typeOf _x) in ["SmokeShell","rhs_40mm_white","rhs_ammo_rdg2_white","rhs_ammo_an_m8hc"];
 						};
 					};
 
