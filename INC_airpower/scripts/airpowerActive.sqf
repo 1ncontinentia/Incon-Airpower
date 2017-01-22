@@ -83,26 +83,13 @@ if (_fullVP && !_repeat) then {_callingObject globalChat format ["Type 2 control
 
 sleep 2;
 
-if (!_repeat) then {
-	//Execute relevant script
-	switch (_callingObject getVariable ["APW_markType","laser"]) do {
-		case "laser": {
-			[[_callingObject,_hqObject], 'INC_airpower\scripts\markLaser.sqf'] remoteExec ['execVM',_callingObject];
-		};
-
-		case "thrown": {
-			[[_callingObject,_hqObject], 'INC_airpower\scripts\markThrow.sqf'] remoteExec ['execVM',_callingObject];
-		};
+//Execute relevant script
+switch (_callingObject getVariable ["APW_markType","laser"]) do {
+	case "laser": {
+		[[_callingObject,_hqObject,_repeat], 'INC_airpower\scripts\markLaser.sqf'] remoteExec ['execVM',_callingObject];
 	};
-} else {
-	//Execute relevant script
-	switch (_callingObject getVariable ["APW_markType","laser"]) do {
-		case "laser": {
-			[[_callingObject,_hqObject,true], 'INC_airpower\scripts\markLaser.sqf'] remoteExec ['execVM',_callingObject];
-		};
 
-		case "thrown": {
-			[[_callingObject,_hqObject,true], 'INC_airpower\scripts\markThrow.sqf'] remoteExec ['execVM',_callingObject];
-		};
+	case "thrown": {
+		[[_callingObject,_hqObject,_repeat], 'INC_airpower\scripts\markThrow.sqf'] remoteExec ['execVM',_callingObject];
 	};
 };
