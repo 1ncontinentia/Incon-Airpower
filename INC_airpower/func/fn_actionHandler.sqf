@@ -39,7 +39,7 @@ switch (_operation) do {
 		];
 
 		APW_cancelTarget = _callingObject addAction [
-			"<t color='#FF0000'>Abort CAS Mission</t>", {
+			"<t color='#FF0000'>Abort</t>", {
 				_callingObject = _this select 0;
 				private _activeActions = (_callingObject getVariable "APW_activeActions");
 				{_callingObject removeAction _x} forEach _activeActions;
@@ -387,7 +387,7 @@ switch (_operation) do {
 	case "StickyTargetSelect": {
 
 		APW_selectGuidance1 = _callingObject addAction [
-			"Engage detected unit", {
+			"Select detected unit", {
 				_callingObject = _this select 0;
 				private _activeActions = (_callingObject getVariable "APW_activeActions");
 				{_callingObject removeAction _x} forEach _activeActions;

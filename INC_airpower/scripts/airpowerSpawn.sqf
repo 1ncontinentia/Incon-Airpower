@@ -97,6 +97,8 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= APW_sunset
 
     	[_caller,hqObject] spawn compile preprocessFileLineNumbers "INC_airpower\scripts\airpowerSensors.sqf";
 
+    	[_caller,hqObject] spawn compile preprocessFileLineNumbers "INC_airpower\scripts\targetTracking.sqf";
+
     } else {
         if (_fullVP) then {hqObject globalChat format ["%1: %2 is at the Charlie Papa. Advise when ready to authenticate.",_airCallsign,_airCallsign]};
     };
@@ -163,15 +165,25 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= APW_sunset
 		3 setRadioMsg "Request guided strike" ;
 	};
 
+	[_caller,hqObject] spawn {
+        params [["_caller",player],["_hqObject",hqObject]];
+        private ["_triggerStatements"];
+		APW_apTrig = createTrigger ["EmptyDetector", [0,0,0]];
+        _triggerStatements = format ["[[player,hqObject], 'INC_airpower\scripts\trackingRequest.sqf'] remoteExec ['execVM',player]"];
+		APW_apTrig setTriggerActivation["DELTA","PRESENT",true];
+		APW_apTrig setTriggerStatements["this", _triggerStatements, ""];
+		4 setRadioMsg "Request target tracking" ;
+	};
+
 	[_airCallsign,_hqCallsign,hqObject] spawn {
         params ["_airCallsign","_hqCallsign","_hqObject"];
         private ["_triggerStatements","_radioMessage"];
         _radioMessage = format ["Abort %1 Mission",_airCallsign];
 		APW_apAbtTrig = createTrigger ["EmptyDetector", [0,0,0]];
         _triggerStatements = format ["deleteVehicle APW_apTrig; deleteVehicle APW_apAbtTrig; missionNamespace setVariable ['APW_airpowerTracking', false, true]; missionNamespace setVariable ['APW_airMissionComplete', true, true]; hqObject globalChat '%1: %2 mission aborted.'",_hqCallsign,_airCallsign];
-		APW_apAbtTrig setTriggerActivation["DELTA","PRESENT",true];
+		APW_apAbtTrig setTriggerActivation["ECHO","PRESENT",true];
 		APW_apAbtTrig setTriggerStatements["this", _triggerStatements, ""];
-		4 setRadioMsg _radioMessage;
+		5 setRadioMsg _radioMessage;
 	};
 
     private _i = _timeOnTarget;

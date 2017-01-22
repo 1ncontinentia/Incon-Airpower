@@ -110,7 +110,7 @@ waitUntil {
 
 		} forEach ((player nearEntities [["Man", "Car", "Motorcycle", "Tank"],_trackingRange]) select {
 
-			if (_reliability > (random 100)) then {
+			if ((_reliability > (random 100)) && {!(_x in (missionNamespace getVariable ["APW_trackedTargets",[]]))}) then {
 
 				if (!(_objectOcclusion) && {(((str typeOf _x) find "Rabbit") == -1)} && {(((str typeOf _x) find "Snake") == -1)} && {(((str typeOf _x) find "Bird") == -1)}) exitWith {true};
 
