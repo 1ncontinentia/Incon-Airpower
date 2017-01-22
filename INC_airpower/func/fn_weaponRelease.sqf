@@ -75,8 +75,8 @@ _this spawn {
 
 						[_hqObject,_airCallsign,_travelTime] spawn {
 							params ["_hqObject","_airCallsign","_travelTime"];
-							if ((_travelTime > 10) && (!_delayedLaunch)) then {
-								sleep (_travelTime - 5);
+							if (_travelTime > 10) then {
+								sleep (_travelTime - 4.8);
 								_hqObject globalChat format ["%1: 5 seconds.",_airCallsign];
 							};
 						};
@@ -180,10 +180,10 @@ _this spawn {
 					if (_primaryLaunch) then {
 						_hqObject globalChat format ["%1: Missile off the rail. Time of flight, %2 seconds.",_airCallsign, (round _travelEstimate)];
 
-						[_hqObject,_airCallsign,_travelEstimate] spawn {
-							params ["_hqObject","_airCallsign","_travelTime"];
+						[_hqObject,_airCallsign,_travelEstimate,_delayedLaunch] spawn {
+							params ["_hqObject","_airCallsign","_travelTime","_delayedLaunch"];
 							if ((_travelTime > 10) && (!_delayedLaunch)) then {
-								sleep (_travelTime - 5);
+								sleep (_travelTime - 5.5);
 								_hqObject globalChat format ["%1: 5 seconds.",_airCallsign];
 							};
 						};
@@ -321,6 +321,10 @@ _this spawn {
 				if (!isNil "_aircraftObject") then {deleteVehicle _aircraftObject};
 
 				if (_rtbOnNoAmmo) then {
+
+					if (!isNil "APW_apAbtTrig") then {deleteVehicle APW_trackTrig};
+
+					if (!isNil "APW_apAbtTrig") then {deleteVehicle APW_trackClearTrig};
 
 					if (!isNil "APW_apAbtTrig") then {deleteVehicle APW_apAbtTrig};
 

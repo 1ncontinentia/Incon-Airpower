@@ -31,7 +31,7 @@ if (!_repeat) then {
 if (_fullVP && !_repeat) then {
 	_hqObject globalChat format ["%1: %2, this is %3, roger, mark target for tracking.",_airCallsign,(group _callingObject),_airCallsign];
 };
-
+sleep 2; 
 //Confirm target
 [_callingObject,"ConfirmTarget"] call APW_fnc_actionHandler;
 
@@ -155,3 +155,4 @@ _activeTargets = (missionNamespace getVariable ["APW_trackedTargets",[]]);
 _activeTargets pushBackUnique _stickyTarget;
 
 missionNamespace setVariable ["APW_trackedTargets",_activeTargets];
+[_callingObject,"AbortStrike"] call APW_fnc_APWMain;

@@ -518,7 +518,7 @@ if (count _missileTargets != 0) then {
 		private ["_target"];
 		_target = (_missileTargets select _i);
 		sleep 0.4;
-		[_callingObject,"autoGuideOrdnance",[_launchPos,_target,false]] call APW_fnc_weaponRelease;
+		[_callingObject,"autoGuideOrdnance",[_launchPos,_target,false,_delayedMissiles]] call APW_fnc_weaponRelease;
 	};
 };
 

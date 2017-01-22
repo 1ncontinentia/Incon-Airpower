@@ -160,19 +160,29 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= APW_sunset
         private ["_triggerStatements"];
 		APW_apTrig = createTrigger ["EmptyDetector", [0,0,0]];
         _triggerStatements = format ["[[player,hqObject], 'INC_airpower\scripts\airpowerActive.sqf'] remoteExec ['execVM',player]"];
-		APW_apTrig setTriggerActivation["CHARLIE","PRESENT",true];
+		APW_apTrig setTriggerActivation["BRAVO","PRESENT",true];
 		APW_apTrig setTriggerStatements["this", _triggerStatements, ""];
-		3 setRadioMsg "Request guided strike" ;
+		2 setRadioMsg "Request guided strike" ;
 	};
 
 	[_caller,hqObject] spawn {
         params [["_caller",player],["_hqObject",hqObject]];
         private ["_triggerStatements"];
-		APW_apTrig = createTrigger ["EmptyDetector", [0,0,0]];
+		APW_trackTrig = createTrigger ["EmptyDetector", [0,0,0]];
         _triggerStatements = format ["[[player,hqObject], 'INC_airpower\scripts\trackingRequest.sqf'] remoteExec ['execVM',player]"];
-		APW_apTrig setTriggerActivation["DELTA","PRESENT",true];
-		APW_apTrig setTriggerStatements["this", _triggerStatements, ""];
-		4 setRadioMsg "Request target tracking" ;
+		APW_trackTrig setTriggerActivation["CHARLIE","PRESENT",true];
+		APW_trackTrig setTriggerStatements["this", _triggerStatements, ""];
+		3 setRadioMsg "Request target tracking" ;
+	};
+
+	[_caller,hqObject] spawn {
+        params [["_caller",player],["_hqObject",hqObject]];
+        private ["_triggerStatements"];
+		APW_trackClearTrig = createTrigger ["EmptyDetector", [0,0,0]];
+        _triggerStatements = format ["missionNamespace setVariable ['APW_trackedTargets',nil,true];"];
+		APW_trackClearTrig setTriggerActivation["DELTA","PRESENT",true];
+		APW_trackClearTrig setTriggerStatements["this", _triggerStatements, ""];
+		4 setRadioMsg "Stop manual tracking" ;
 	};
 
 	[_airCallsign,_hqCallsign,hqObject] spawn {
@@ -180,7 +190,7 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= APW_sunset
         private ["_triggerStatements","_radioMessage"];
         _radioMessage = format ["Abort %1 Mission",_airCallsign];
 		APW_apAbtTrig = createTrigger ["EmptyDetector", [0,0,0]];
-        _triggerStatements = format ["deleteVehicle APW_apTrig; deleteVehicle APW_apAbtTrig; missionNamespace setVariable ['APW_airpowerTracking', false, true]; missionNamespace setVariable ['APW_airMissionComplete', true, true]; hqObject globalChat '%1: %2 mission aborted.'",_hqCallsign,_airCallsign];
+        _triggerStatements = format ["deleteVehicle APW_apTrig; deleteVehicle APW_trackTrig; deleteVehicle APW_trackClearTrig; deleteVehicle APW_apAbtTrig; missionNamespace setVariable ['APW_airpowerTracking', false, true]; missionNamespace setVariable ['APW_airMissionComplete', true, true]; hqObject globalChat '%1: %2 mission aborted.'",_hqCallsign,_airCallsign];
 		APW_apAbtTrig setTriggerActivation["ECHO","PRESENT",true];
 		APW_apAbtTrig setTriggerStatements["this", _triggerStatements, ""];
 		5 setRadioMsg _radioMessage;
@@ -199,6 +209,8 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= APW_sunset
 	if !(missionNamespace getVariable ["APW_airMissionComplete",false]) then {
 		hqObject globalChat format ["%1: %2 is bingo, happy hunting.",_airCallsign,_airCallsign];
 		deleteVehicle APW_apTrig;
+		deleteVehicle APW_trackTrig;
+		deleteVehicle APW_trackClearTrig;
 		deleteVehicle APW_apAbtTrig;
 		missionNamespace setVariable ["APW_airpowerTracking", false, true];
 	};

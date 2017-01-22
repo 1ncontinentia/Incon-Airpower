@@ -9,7 +9,6 @@ Shows map markers on all units with a 90% reliability which degrades to 27% in f
 
 ---------------------------------------------------------------------------- */
 
-params ["_unit",objNull];
 private ["_m","_markers","_reliability","_overcastScalar","_percentageReliability","_isAffectedByOvercast","_maxOvercastDegradation","_trackingRange"];
 
 //Run only on clients
@@ -20,6 +19,8 @@ if ((isDedicated) || !(hasInterface)) exitWith {};
 
 //Settings
 
+_reliability = _percentageReliability;
+
 waitUntil {
 
 	if !((missionNamespace getVariable ["APW_trackedTargets",[]]) isEqualTo []) then {
@@ -27,73 +28,15 @@ waitUntil {
 		if (((("B_UavTerminal" in assignedItems player) || ("I_UavTerminal" in assignedItems player) || ("O_UavTerminal" in assignedItems player)) && {(_terminalNecessary)}) || {!(_terminalNecessary)}) then {
 
 			if (_isAffectedByOvercast) then {
-				_overcastScalar = ((_maxOvercastDegradation)/200); // 0 - 1, 1 meaning full degradation
+				_overcastScalar = ((_maxOvercastDegradation)/100); // 0 - 1, 1 meaning full degradation
 				_reliability = (1 - (overcast * _overcastScalar)); // Percentage reliability after overcast degradation taken off, higher = better - default 63 at full overcast
 			};
 
 			_markers = [];
 
-			{
+			private _targets = (((missionNamespace getVariable ["APW_trackedTargets",[]]) + (player getVariable ["APW_targetArray",[]])) select {
 
-				private _pos = getPosWorld _x;
-				private _finalPos = ([_pos,1] call CBA_fnc_Randpos);
-				_m = createMarkerLocal [format ["APW_tracking%1",_x], _finalPos];
-				_m setMarkerSizeLocal [0.8,0.8];
-				_m setMarkerDirLocal 45;
-				_markers set [count _markers, _m];
-
-				if (_x isKindOf "Man") then {
-
-					_m setMarkerTypeLocal "loc_smallTree";
-
-					if (side _x != _sideFriendly) then {
-						_m setMarkerColorLocal "ColorPink";
-					} else {
-						_m setMarkerColorLocal "colorBLUFOR";
-					};
-
-					_m setMarkerTextLocal "Tracked infantry.";
-
-				} else {
-
-					_m setMarkerTypeLocal "select";
-
-					_m setMarkerSizeLocal [0.4,0.4];
-
-					_m setMarkerTextLocal "Tracked vehicle.";
-
-					switch (side _x) do {
-						case civilian: {
-							_m setMarkerColorLocal "ColorWhite";
-						};
-						case resistance;
-						case east;
-						case west: {
-							if (side _x != _sideFriendly) then {
-								_m setMarkerColorLocal "ColorPink";
-							} else {
-								_m setMarkerColorLocal "colorBLUFOR";
-							};
-						};
-					};
-				};
-
-				if (!alive _x) then {
-					_m setMarkerTypeLocal "KIA";
-
-					if !(_x getVariable ["APW_deadSleep",false]) then {
-						[_x] spawn {
-							_x setVariable ["APW_deadSleep",true,true];
-							sleep 60;
-							private _trackedTargets = APW_trackedTargets - _x;
-							missionNamespace setVariable ["APW_trackedTargets",_trackedTargets,true];
-						};
-					};
-				};
-
-			} forEach ((APW_trackedTargets + (player getVariable ["APW_targetArray",[]])) select {
-
-				if (_reliability > (random 100)) then {
+				if (_percentageReliability > (random 100)) then {
 
 					if !(_objectOcclusion) exitWith {true};
 
@@ -103,6 +46,45 @@ waitUntil {
 					};
 				};
 			});
+
+			{
+
+				private _finalPos = getPosWorld _x;
+				_m = createMarkerLocal [format ["APW_manualTracking%1",_x], _finalPos];
+				_m setMarkerSizeLocal [0.3,0.3];
+				_m setMarkerDirLocal 45;
+				_markers set [count _markers, _m];
+				_m setMarkerTypeLocal "mil_objective_noShadow";
+				_m setMarkerColorLocal "ColorRed";
+
+				if (_x isKindOf "Man") then {
+
+					_m setMarkerTextLocal "Marked infantry";
+
+				} else {
+
+					_m setMarkerTextLocal "Marked vehicle";
+					_m setMarkerSizeLocal [0.7,0.7];
+				};
+
+				if (!alive _x) then {
+					_m setMarkerTypeLocal "KIA";
+					_m setMarkerDirLocal 0;
+					_m setMarkerSizeLocal [0.6,0.6];
+					_m setMarkerColorLocal "ColorBlack";
+
+					if !(_x getVariable ["APW_deadSleep",false]) then {
+						[_x] spawn {
+							params ["_deadUnit"];
+							_deadUnit setVariable ["APW_deadSleep",true,true];
+							sleep 30;
+							private _trackedTargets = APW_trackedTargets - [_deadUnit];
+							missionNamespace setVariable ["APW_trackedTargets",_trackedTargets,true];
+						};
+					};
+				};
+
+			} forEach _targets;
 
 			_i = 1;
 			waitUntil {
