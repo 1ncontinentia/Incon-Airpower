@@ -6,7 +6,7 @@ Author: Incontinentia
 
 */
 
-private ["_necItem","_fullVP","_preStrikeCDE","_playTimeVar","_playTime","_percentage","_hqCallsign","_airCallsign","_nightTimeOnly","_dawn","_dusk","_aircraftType","_minTimeOnTgt","_randomDelay","_altitudeMin","_altitudeRandom","_radius","_speed","_ammoArray","_allowSensitive","_maxCollateral","_sideFriendly","_trackingEnabled","_percentageReliability","_isAffectedByOvercast","_objectOcclusion","_maxOvercastDegradation","_trackingRange","_terminalNecessary","_requestInterval","_repeatedStrikes","_timeout"];
+private ["_trackingType","_necItem","_fullVP","_preStrikeCDE","_playTimeVar","_playTime","_percentage","_hqCallsign","_airCallsign","_nightTimeOnly","_dawn","_dusk","_aircraftType","_minTimeOnTgt","_randomDelay","_altitudeMin","_altitudeRandom","_radius","_speed","_ammoArray","_allowSensitive","_maxCollateral","_sideFriendly","_trackingEnabled","_percentageReliability","_isAffectedByOvercast","_objectOcclusion","_maxOvercastDegradation","_trackingRange","_terminalNecessary","_requestInterval","_repeatedStrikes","_timeout"];
 
 //General Options
 _percentage = 100;                      //Percentage chance that the aircraft will be available for sorties
@@ -48,6 +48,7 @@ _sideFriendly = west;
 
 //Sensor / Tracking Options
 _trackingEnabled = true;                //Is tracking enabled? (If false, below settings are ignored)
+_trackingType = "full";                 //Can be "full" (manual and automatic), "manual" (targets must be manually marked by JTAC)
 _percentageReliability = 98;			//What percentage of units will be picked up by tracking in perfect conditions?
 _isAffectedByOvercast = true;			//Is tracking affected by overcast conditions?
 _objectOcclusion = true;				//Do objects block tracking (i.e. a unit standing under a building)?

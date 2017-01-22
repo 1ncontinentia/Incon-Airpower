@@ -18,8 +18,7 @@ if ((isDedicated) || !(hasInterface)) exitWith {};
 
 #include "..\APW_setup.sqf"
 
-//Settings
-
+if !(_trackingType isEqualTo "full") exitWith {}; 
 
 if (!(("B_UavTerminal" in assignedItems player) || ("I_UavTerminal" in assignedItems player) || ("O_UavTerminal" in assignedItems player)) && (_terminalNecessary)) then {
 

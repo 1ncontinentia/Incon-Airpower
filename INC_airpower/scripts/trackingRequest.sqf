@@ -4,7 +4,9 @@ private ["_ammoAvailable","_airpowerLaser","_tgt","_speed","_seconds","_ammo","_
 
 #include "..\APW_setup.sqf"
 
-if (!local _callingObject) exitWith {};
+if ((!local _callingObject) || {(!_trackingEnabled)}) exitWith {};
+
+if !((_trackingType isEqualTo "full") || (_trackingType isEqualTo "manual")) exitWith {}; 
 
 if !(_necItem in (assignedItems _callingObject)) exitWith {hint "You are missing the required communication device."};
 
@@ -31,7 +33,7 @@ if (!_repeat) then {
 if (_fullVP && !_repeat) then {
 	_hqObject globalChat format ["%1: %2, this is %3, roger, mark target for tracking.",_airCallsign,(group _callingObject),_airCallsign];
 };
-sleep 2; 
+sleep 2;
 //Confirm target
 [_callingObject,"ConfirmTarget"] call APW_fnc_actionHandler;
 
