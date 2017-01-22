@@ -128,7 +128,7 @@ if (typeName _stickyTarget == "OBJECT") then {
 		((_callingObject getVariable ["APW_stageProceed",false]) || (_i > _timeout) || (!alive _callingObject))
 	};
 
-	if (!(_callingObject getVariable ["APW_stageProceed",false]) || {_callingObject getVariable ["APW_abortStrike",false]} || (_callingObject getVariable ["APW_reconfirmStrike",false])) exitWith {};
+	if (!(_callingObject getVariable ["APW_stageProceed",false]) || {_callingObject getVariable ["APW_abortStrike",false]} || {_callingObject getVariable ["APW_reconfirmStrike",false]}) exitWith {};
 
 	//If unit hasn't aborted and wants to track, confirm tracking and update targets
 	if (_callingObject getVariable ["APW_stickyTarget",false]) then {
