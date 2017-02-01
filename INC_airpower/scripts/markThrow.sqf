@@ -467,6 +467,11 @@ if ((count _missileTargets != 0) && (count _bombTargets != 0)) then {};
 
 _delayedMissiles = ((count _missileTargets != 0) && (count _bombTargets != 0));
 
+[] spawn {
+	sleep 180;
+	missionNameSpace setVariable ["APW_airpowerEngaging",false];
+}; 
+
 //Launch bombs first
 if (count _bombTargets != 0) then {
 
