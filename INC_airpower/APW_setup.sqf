@@ -15,7 +15,7 @@ _airCallsign = "Grendel 1-4";           //Aircraft callsign
 _nightTimeOnly = false;                 //Is activity limited to night-time only sorties?
 
 //Player options
-_necItem = "ItemRadio";                 //Required item to call for air support.
+_necItem = "ItemRadio";                 //Required item to call for air support (must be in the unit's assigned items - i.e. laser designator or UAV terminal, but not smoke grenade).
 _fullVP = true;                         //Should JTAC and pilot use full voice procedure or limit radio contact to essential only?
 _preStrikeCDE = true;                   //Should the pilot conduct a collateral damage assessment before the strike? (Check for civilians, nearby friendlies, sensitive targets in strike radius)
 
