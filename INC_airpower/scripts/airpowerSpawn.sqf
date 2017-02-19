@@ -22,7 +22,7 @@ params [["_object",player], ["_caller",player], ["_id",""], ["_args",[]]];
 #include "..\APW_setup.sqf"
 
 
-_HQLogicGrp = createGroup sideLogic;
+_HQLogicGrp = createGroup _sideFriendly;
 hqObject = _HQLogicGrp createUnit [
     "Logic",
     [0,0,0],
