@@ -8,6 +8,98 @@ _return = false;
 
 switch (_operation) do {
 
+	case "Menu": {
+
+		if !(missionNameSpace getVariable ["APW_airpowerEngaging",false]) then {
+
+			APW_menu1 = _callingObject addAction [
+				"<t color='#FFC300'>Request CAS</t>", {
+					_callingObject = _this select 0;
+					private _activeActions = (_callingObject getVariable "APW_activeActions");
+					{_callingObject removeAction _x} forEach _activeActions;
+
+					[[player,player], 'INC_airpower\scripts\airpowerSpawn.sqf'] remoteExec ['execVM',player];
+
+				},[],6,true,true,"","(_this == _target) && !(missionNamespace getVariable ['APW_airAssetRequested',false])"
+			];
+
+			APW_menu2 = _callingObject addAction [
+				"<t color='#FFC300'>CAS Status Update</t>", {
+					_callingObject = _this select 0;
+					private _activeActions = (_callingObject getVariable "APW_activeActions");
+					{_callingObject removeAction _x} forEach _activeActions;
+
+					_callingObject globalChat format ["%1, this is %2, requesting status update on CAS, over.",APW_hqCallsign,(group _callingObject),APW_airCallsign]};
+
+					[] spawn {
+						sleep (2 + (random 2));
+						[0,"GetStatus"] call APW_fnc_APWMain;
+					};
+
+				},[],6,true,true,"","(_this == _target) && (missionNamespace getVariable ['APW_airAssetRequested',false])"
+			];
+
+			APW_menu3 = _callingObject addAction [
+				"<t color='#FFC300'>Request Guided Strike</t>", {
+					_callingObject = _this select 0;
+					private _activeActions = (_callingObject getVariable "APW_activeActions");
+					{_callingObject removeAction _x} forEach _activeActions;
+
+					[[player,hqObject], 'INC_airpower\scripts\airpowerActive.sqf'] remoteExec ['execVM',player];
+
+				},[],6,true,true,"","(_this == _target) && ((missionNamespace getVariable ['APW_airAssetStatus','Ready']) isEqualTo 'OnStation')"
+			];
+
+			APW_menu4 = _callingObject addAction [
+				"<t color='#FFC300'>Request Manual Target Tracking</t>", {
+					_callingObject = _this select 0;
+					private _activeActions = (_callingObject getVariable "APW_activeActions");
+					{_callingObject removeAction _x} forEach _activeActions;
+
+					[[player,hqObject], 'INC_airpower\scripts\trackingRequest.sqf'] remoteExec ['execVM',player];
+
+				},[],6,true,true,"","(_this == _target) && ((missionNamespace getVariable ['APW_airAssetStatus','Ready']) isEqualTo 'OnStation')"
+			];
+
+			APW_menu5 = _callingObject addAction [
+				"<t color='#FFC300'>Stop Manual Target Tracking</t>", {
+					_callingObject = _this select 0;
+					private _activeActions = (_callingObject getVariable "APW_activeActions");
+					{_callingObject removeAction _x} forEach _activeActions;
+
+					missionNamespace setVariable ['APW_trackedTargets',nil,true];
+
+				},[],6,true,true,"","(_this == _target) && ((missionNamespace getVariable ['APW_airAssetStatus','Ready']) isEqualTo 'OnStation')"
+			];
+
+			APW_menu6 = _callingObject addAction [
+				"<t color='#FFC300'>Abort CAS Mission</t>", {
+					_callingObject = _this select 0;
+					private _activeActions = (_callingObject getVariable "APW_activeActions");
+					{_callingObject removeAction _x} forEach _activeActions;
+
+					missionNamespace setVariable ['APW_airpowerTracking', false, true];
+					missionNamespace setVariable ['APW_airMissionComplete', true, true];
+
+					[] spawn {
+						sleep 0.5;
+						hqObject globalChat format ['%1: %2 mission aborted.',APW_hqCallsign,APW_airCallsign];
+					};
+
+				},[],6,true,true,"","(_this == _target) && ((missionNamespace getVariable ['APW_airAssetStatus','Ready']) isEqualTo 'OnStation')"
+			];
+
+			_activeActions = (_callingObject getVariable "APW_activeActions") + [APW_menu1,APW_menu2,APW_menu3,APW_menu4,APW_menu5,APW_menu6];
+
+			_callingObject setVariable ["APW_activeActions",_activeActions];
+		} else {
+			[0,"GetStatus"] call APW_fnc_APWMain;
+			hqObject globalChat format ["%1: %2, %3 is currently engaging.",APW_airCallsign,(group _callingObject),APW_airCallsign];
+		};
+
+		_return = ["APW_stageProceed","APW_abortStrike"];
+	};
+
 	case "AbortOption": {
 		APW_abortStrike = _callingObject addAction [
 			"<t color='#FF0000'>Abort CAS Mission</t>", {
@@ -18,7 +110,7 @@ switch (_operation) do {
 			},[],6,true,true,"","(_this == _target)"
 		];
 
-		_activeActions = [APW_abortStrike];
+		_activeActions = (_callingObject getVariable "APW_activeActions") + [APW_abortStrike];
 
 		_callingObject setVariable ["APW_activeActions",_activeActions];
 
@@ -49,7 +141,7 @@ switch (_operation) do {
 			},[],5,true,true,"","(_this == _target)"
 		];
 
-		_activeActions = [APW_confirmTarget,APW_cancelTarget];
+		_activeActions = (_callingObject getVariable "APW_activeActions") + [APW_confirmTarget,APW_cancelTarget];
 
 		_callingObject setVariable ["APW_activeActions",_activeActions];
 
@@ -167,7 +259,7 @@ switch (_operation) do {
 			},[],5,true,true,"","(_this == _target)"
 		];
 
-		_activeActions = [APW_confirmIR,APW_confirmWhite,APW_confirmPurple,APW_confirmOrange,APW_confirmGreen,APW_confirmRed,APW_confirmYellow,APW_confirmBlue,APW_cancelMarker];
+		_activeActions = (_callingObject getVariable "APW_activeActions") + [APW_confirmIR,APW_confirmWhite,APW_confirmPurple,APW_confirmOrange,APW_confirmGreen,APW_confirmRed,APW_confirmYellow,APW_confirmBlue,APW_cancelMarker];
 
 		_callingObject setVariable ["APW_activeActions",_activeActions];
 
@@ -198,7 +290,7 @@ switch (_operation) do {
 			},[],5,true,true,"","(_this == _target)"
 		];
 
-		_activeActions = [APW_finalConfirm,APW_finalCancel];
+		_activeActions = (_callingObject getVariable "APW_activeActions") + [APW_finalConfirm,APW_finalCancel];
 
 		_callingObject setVariable ["APW_activeActions",_activeActions];
 
@@ -255,7 +347,7 @@ switch (_operation) do {
 			},[],5,true,true,"","(_this == _target)"
 		];
 
-		_activeActions = [APW_confirmTargetLaser,APW_confirmTargetThrowDay,APW_confirmTargetThrowNight,APW_cancelStrikeRequest];
+		_activeActions = (_callingObject getVariable "APW_activeActions") + [APW_confirmTargetLaser,APW_confirmTargetThrowDay,APW_confirmTargetThrowNight,APW_cancelStrikeRequest];
 
 		_callingObject setVariable ["APW_activeActions",_activeActions];
 
@@ -302,7 +394,7 @@ switch (_operation) do {
 			},[],5,true,true,"","(_this == _target)"
 		];
 
-		_activeActions = [APW_confirmTargetMultiNeg,APW_confirmTargetMultiAff,APW_cancelMultiTarget];
+		_activeActions = (_callingObject getVariable "APW_activeActions") + [APW_confirmTargetMultiNeg,APW_confirmTargetMultiAff,APW_cancelMultiTarget];
 
 		_callingObject setVariable ["APW_activeActions",_activeActions];
 
@@ -438,7 +530,7 @@ switch (_operation) do {
 			},[],5,true,true,"","(_this == _target)"
 		];
 
-		_activeActions = [APW_selectGuidance1,APW_selectGuidance2,APW_selectGuidance3,APW_cancelStickyTarget];
+		_activeActions = (_callingObject getVariable "APW_activeActions") + [APW_selectGuidance1,APW_selectGuidance2,APW_selectGuidance3,APW_cancelStickyTarget];
 
 		_callingObject setVariable ["APW_activeActions",_activeActions];
 
@@ -483,7 +575,7 @@ switch (_operation) do {
 			},[],5,true,true,"","(_this == _target)"
 		];
 
-		_activeActions = [APW_markConfirm1,APW_markConfirm2,APW_cancelMarkConfirm];
+		_activeActions = (_callingObject getVariable "APW_activeActions") + [APW_markConfirm1,APW_markConfirm2,APW_cancelMarkConfirm];
 
 		_callingObject setVariable ["APW_activeActions",_activeActions];
 

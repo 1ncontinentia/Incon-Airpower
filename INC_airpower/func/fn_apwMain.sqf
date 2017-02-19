@@ -10,10 +10,10 @@ switch (_operation) do {
 
 	case "createRadTrig": {
 	    APW_apSpwnTrig = createTrigger ["EmptyDetector", [0,0,0], false];
-	    _triggerStatements = format ["[[player,player], 'INC_airpower\scripts\airpowerSpawn.sqf'] remoteExec ['execVM',player]"];
+	    _triggerStatements = format ["[player,'Menu'] call APW_fnc_actionHandler;"];
 	    APW_apSpwnTrig setTriggerActivation["ALPHA","PRESENT",true];
 	    APW_apSpwnTrig setTriggerStatements["this", _triggerStatements, ""];
-	    1 setRadioMsg "Request Air Cover" ;
+	    1 setRadioMsg "Interact with CAS";
 	};
 
 	case "NilVars": {
@@ -446,31 +446,37 @@ switch (_operation) do {
 			case "OnRoute": {
 	            _time = missionNamespace getVariable ["APW_minutesLeft",0];
 				hqObject globalChat format ["%1: %2 is %3 mikes out.",_hqCallsign,_airCallsign,_time];
-
 			};
+
 			case "OnStation": {
 	            _time = missionNamespace getVariable ["APW_minutesLeft",0];
-				hqObject globalChat format ["%1: %2 is on station.",_hqCallsign,_airCallsign,_time];
+				_ammoArray = missionNamespace getVariable ["APW_ammoArray",[_bomb,_missile]];
+				_ammoArray params [["_bombsRemaining",_bomb],["_missilesRemaining",_missile]];
+				hqObject globalChat format ["%1: %1 is on station. %2 missiles, %3 bombs remaining. %4 mikes until bingo.",_airCallsign,_missilesRemaining,_bombsRemaining,_time];
 
 			};
+
 			case "Return": {
 	            _time = missionNamespace getVariable ["APW_minutesLeft",0];
-				hqObject globalChat format ["%1: %2 is RTB.",_hqCallsign,_airCallsign,_time];
-
+				hqObject globalChat format ["%1: %2 is RTB. Back at base in %3 mikes.",_hqCallsign,_airCallsign,_time];
 			};
+
 			case "Rearm": {
 	            _time = missionNamespace getVariable ["APW_minutesLeft",0];
-				hqObject globalChat format ["%1: %2 is unavailable.",_hqCallsign,_airCallsign,_time];
-
+				if ((missionNamespace getVariable ["APW_sortiesLeft",_maxSorties]) > 0) then {
+					hqObject globalChat format ["%1: %2 is being turned around. %3 mikes until %2 is rearmed.",_hqCallsign,_airCallsign,_time];
+				} else {
+					hqObject globalChat format ["%1: %2 is unavailable.",_hqCallsign,_airCallsign];
+				};
 			};
+
 			case "Ready": {
 				_return = true;
 				hqObject globalChat format ["%1: %2 is awaiting tasking.",_hqCallsign,_airCallsign];
-
 			};
+
 			case "Unavailable": {
 				hqObject globalChat format ["%1: %2 is currently unavailable.",_hqCallsign,_airCallsign];
-
 			};
 		};
 	};
