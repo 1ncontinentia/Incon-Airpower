@@ -13,7 +13,7 @@ switch (_operation) do {
 		if !(missionNameSpace getVariable ["APW_airpowerEngaging",false]) then {
 
 			APW_menu1 = _callingObject addAction [
-				"<t color='#FFC300'>Request CAS</t>", {
+				"<t color='#FFA600'>Request CAS</t>", {
 					_callingObject = _this select 0;
 					private _activeActions = (_callingObject getVariable "APW_activeActions");
 					{_callingObject removeAction _x} forEach _activeActions;
@@ -24,7 +24,7 @@ switch (_operation) do {
 			];
 
 			APW_menu2 = _callingObject addAction [
-				"<t color='#FFC300'>CAS Status Update</t>", {
+				"<t color='#FFA600'>CAS Status Update</t>", {
 					_callingObject = _this select 0;
 					private _activeActions = (_callingObject getVariable "APW_activeActions");
 					{_callingObject removeAction _x} forEach _activeActions;
@@ -40,7 +40,7 @@ switch (_operation) do {
 			];
 
 			APW_menu3 = _callingObject addAction [
-				"<t color='#FFC300'>Request Guided Strike</t>", {
+				"<t color='#FFA600'>Request Guided Strike</t>", {
 					_callingObject = _this select 0;
 					private _activeActions = (_callingObject getVariable "APW_activeActions");
 					{_callingObject removeAction _x} forEach _activeActions;
@@ -51,7 +51,7 @@ switch (_operation) do {
 			];
 
 			APW_menu4 = _callingObject addAction [
-				"<t color='#FFC300'>Request Manual Target Tracking</t>", {
+				"<t color='#FFA600'>Request Manual Target Tracking</t>", {
 					_callingObject = _this select 0;
 					private _activeActions = (_callingObject getVariable "APW_activeActions");
 					{_callingObject removeAction _x} forEach _activeActions;
@@ -62,7 +62,7 @@ switch (_operation) do {
 			];
 
 			APW_menu5 = _callingObject addAction [
-				"<t color='#FFC300'>Stop Manual Target Tracking</t>", {
+				"<t color='#FFA600'>Stop Manual Target Tracking</t>", {
 					_callingObject = _this select 0;
 					private _activeActions = (_callingObject getVariable "APW_activeActions");
 					{_callingObject removeAction _x} forEach _activeActions;
@@ -73,7 +73,7 @@ switch (_operation) do {
 			];
 
 			APW_menu6 = _callingObject addAction [
-				"<t color='#FFC300'>Abort CAS Mission</t>", {
+				"<t color='#FFA600'>Abort CAS Mission</t>", {
 					_callingObject = _this select 0;
 					private _activeActions = (_callingObject getVariable "APW_activeActions");
 					{_callingObject removeAction _x} forEach _activeActions;
