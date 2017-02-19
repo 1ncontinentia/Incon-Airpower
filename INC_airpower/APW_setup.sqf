@@ -32,6 +32,7 @@ _playTimeVar = 15;                      //Variation in minutes for time on stati
 _requestInterval = 45;                  //Maximum amount of time in minutes between unsuccessful aircraft requests (will be able to request again once this timer is done)
 _maxSorties = 2;                        //Max number of sorties
 _timeout = 60;                          //Radio message timout in seconds (player must communicate before this runs out or the mission will abort - the final strike confirmation will be 15 times this value to enable coordination)
+_rearmTime = 5;                         //Amount of time (in minutes) the aircraft will take to rearm and refuel after a sortie
 
 //Ordnance options
 _bomb = 2;							    //How many GBUs will the air unit carry?

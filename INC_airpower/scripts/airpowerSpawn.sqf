@@ -14,13 +14,30 @@ or if you want to use a radio trigger, call this in a unit's init (only one unit
 
 [player,"createRadTrig"] call APW_fnc_APWMain;
 
-
 */
 
 params [["_object",player], ["_caller",player], ["_id",""], ["_args",[]]];
 
 #include "..\APW_setup.sqf"
 
+if (_fullVP) then {_caller globalChat format ["%1, this is %2, requesting air cover at GRID %3, over.",_hqCallsign,(group _caller),(mapGridPosition _caller)]};
+
+sleep 0.5;
+
+if (missionNamespace getVariable ["APW_airAssetRequested",false]) exitWith {
+	sleep 3 + (random 5);
+	[0,"GetStatus"] call APW_fnc_APWMain;
+};
+
+sleep 0.5;
+
+missionNamespace setVariable ["APW_sunrise",((date call BIS_fnc_sunriseSunsetTime) select 0),true];
+
+sleep 0.1;
+
+missionNamespace setVariable ["APW_sunset",((date call BIS_fnc_sunriseSunsetTime) select 1),true];
+
+sleep 0.5;
 
 _HQLogicGrp = createGroup _sideFriendly;
 hqObject = _HQLogicGrp createUnit [
@@ -33,30 +50,13 @@ hqObject = _HQLogicGrp createUnit [
 
 _hqObject = hqObject;
 
-if (_fullVP) then {_caller globalChat format ["%1, this is %2, requesting air cover at GRID %3, over.",_hqCallsign,(group _caller),(mapGridPosition _caller)]};
-
-sleep 0.5;
-
-missionNamespace setVariable ["APW_sunrise",((date call BIS_fnc_sunriseSunsetTime) select 0),true];
-
-sleep 0.1;
-
-missionNamespace setVariable ["APW_sunset",((date call BIS_fnc_sunriseSunsetTime) select 1),true];
-
-sleep 0.5;
-
-if (missionNamespace getVariable ["APW_airAssetRequested",false]) exitWith {
-	sleep 0.5;
-	hqObject globalChat format ["%1: %2 has already been requested.",_hqCallsign,_airCallsign];
-};
-
-sleep 0.5;
-
 hqObject globalChat format ["%1: Request received, standby.",_hqCallsign];
 
 if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= APW_sunset || daytime < APW_sunrise)) && ((missionNamespace getVariable ["APW_sortiesLeft",_maxSorties]) > 0)) exitWith {
 
 	missionNamespace setVariable ["APW_airAssetRequested", true, true]; //Prevents multiple requests for aircraft
+
+    missionNamespace setVariable ["APW_airAssetStatus", "OnRoute", true];
 
     missionNamespace setVariable ["APW_ammoArray",[_bomb,_missile]];
 
@@ -69,6 +69,17 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= APW_sunset
 	private _airpowerEta = (_minTimeOnTgt + (random _randomDelay));
 
 	_airpowerEtaMins = round (_airpowerEta/60);
+
+    [_airpowerEtaMins] spawn {
+        params ["_mins"];
+        missionNamespace setVariable ["APW_minutesLeft",_mins,true];
+        waitUntil {
+            sleep 60;
+            _mins = _mins - 1;
+            missionNamespace setVariable ["APW_minutesLeft",_mins,true];
+            (_mins < 1)
+        };
+    };
 
 	hqObject globalChat format ["%1: %2 is available and proceeding to your location. With you in %3 mikes.", _hqCallsign,_airCallsign,_airpowerEtaMins];
 
@@ -102,6 +113,8 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= APW_sunset
     } else {
         if (_fullVP) then {hqObject globalChat format ["%1: %2 is at the Charlie Papa. Advise when ready to authenticate.",_airCallsign,_airCallsign]};
     };
+
+    missionNamespace setVariable ["APW_airAssetStatus", "OnStation", true];
 
     _authKey = {
     	private _auth = selectRandom ["Alpha","Bravo","Charlie","Delta","Echo","Foxtrot","Golf","Hotel","India","Kilo","Lima","Mike","November","Oscar","Papa","Romeo","Sierra","Tango","Uniform"];
@@ -198,6 +211,17 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= APW_sunset
 
     private _i = _timeOnTarget;
 
+    [(_timeOnTarget/60)] spawn {
+        params ["_mins"];
+        missionNamespace setVariable ["APW_minutesLeft",_mins,true];
+        waitUntil {
+            sleep 60;
+            _mins = _mins - 1;
+            missionNamespace setVariable ["APW_minutesLeft",_mins,true];
+            (_mins < 1)
+        };
+    };
+
     //Waits until the mission is complete or the aicraft is bingo fuel
     waitUntil {
         sleep 3;
@@ -215,11 +239,41 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= APW_sunset
 		missionNamespace setVariable ["APW_airpowerTracking", false, true];
 	};
 
+    missionNamespace setVariable ["APW_airAssetStatus", "Return", true];
+
     //Reset the holding variables
-    sleep (_airpowerEta * 2);
+    sleep (_airpowerEta);
+
+    [(_airpowerEta/60)] spawn {
+        params ["_mins"];
+        missionNamespace setVariable ["APW_minutesLeft",_mins,true];
+        waitUntil {
+            sleep 60;
+            _mins = _mins - 1;
+            missionNamespace setVariable ["APW_minutesLeft",_mins,true];
+            (_mins < 1)
+        };
+    };
+
+    missionNamespace setVariable ["APW_airAssetStatus", "Rearm", true];
+
+    sleep (_rearmTime * 60);
+
+    [_rearmTime] spawn {
+        params ["_mins"];
+        missionNamespace setVariable ["APW_minutesLeft",_mins,true];
+        waitUntil {
+            sleep 60;
+            _mins = _mins - 1;
+            missionNamespace setVariable ["APW_minutesLeft",_mins,true];
+            (_mins < 1)
+        };
+    };
 
     missionNamespace setVariable ["APW_airAssetRequested", false, true];
     missionNamespace setVariable ["APW_airMissionComplete", false, true];
+
+    missionNamespace setVariable ["APW_airAssetStatus", "Ready", true];
 };
 
 
@@ -228,12 +282,15 @@ if (!(_nightTimeOnly) || {(daytime >= _dusk || daytime < _dawn)}) then {
 
 	missionNamespace setVariable ["APW_airAssetRequested", true, true]; //Prevents multiple requests for aircraft
 	sleep (5 + (random 10));
+
+    missionNamespace setVariable ["APW_airAssetStatus", "Unavailable", true];
 	hqObject globalChat format ["%1: %2 is currently unavailable.",_hqCallsign,_airCallsign];
 
     [_requestInterval] spawn {
         params [["_requestInterval",45]];
         sleep (random (_requestInterval * 60));
         missionNamespace setVariable ["APW_airAssetRequested", false, true];
+        missionNamespace setVariable ["APW_airAssetStatus", "Ready", true];
     };
 
 } else {

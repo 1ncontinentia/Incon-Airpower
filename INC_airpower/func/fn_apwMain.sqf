@@ -438,6 +438,42 @@ switch (_operation) do {
 			_return = false;
 		};
 	};
+
+	case "GetStatus": {
+		_return = false;
+
+		switch (missionNamespace getVariable ["","Ready"]) do {
+			case "OnRoute": {
+	            _time = missionNamespace getVariable ["APW_minutesLeft",0];
+				hqObject globalChat format ["%1: %2 is %3 mikes out.",_hqCallsign,_airCallsign,_time];
+
+			};
+			case "OnStation": {
+	            _time = missionNamespace getVariable ["APW_minutesLeft",0];
+				hqObject globalChat format ["%1: %2 is on station.",_hqCallsign,_airCallsign,_time];
+
+			};
+			case "Return": {
+	            _time = missionNamespace getVariable ["APW_minutesLeft",0];
+				hqObject globalChat format ["%1: %2 is RTB.",_hqCallsign,_airCallsign,_time];
+
+			};
+			case "Rearm": {
+	            _time = missionNamespace getVariable ["APW_minutesLeft",0];
+				hqObject globalChat format ["%1: %2 is unavailable.",_hqCallsign,_airCallsign,_time];
+
+			};
+			case "Ready": {
+				_return = true;
+				hqObject globalChat format ["%1: %2 is awaiting tasking.",_hqCallsign,_airCallsign];
+
+			};
+			case "Unavailable": {
+				hqObject globalChat format ["%1: %2 is currently unavailable.",_hqCallsign,_airCallsign];
+
+			};
+		};
+	};
 };
 
 _return
