@@ -460,7 +460,7 @@ _callingObject globalChat format ["%1, you are cleared to engage.",_airCallsign]
 sleep (1 + (random 3));
 
 //Launch countdown
-_hqObject globalChat format ["%1: In position. Weapon release in three...",_airCallsign];
+_hqObject globalChat format ["%1: Cleared to engage, weapon release in three...",_airCallsign];
 sleep (1.2 + (random 0.5));
 _hqObject globalChat format ["%1: Two...",_airCallsign];
 sleep (1.2 + (random 0.5));
@@ -482,8 +482,8 @@ if ((count _missileTargets != 0) && (count _bombTargets != 0)) then {};
 _delayedMissiles = ((count _missileTargets != 0) && (count _bombTargets != 0));
 
 [] spawn {
-	sleep 280;
-	missionNameSpace setVariable ["APW_airpowerEngaging",false];
+	sleep 180;
+	missionNameSpace setVariable ["APW_airpowerEngaging",false,true];
 };
 
 //Launch bombs first

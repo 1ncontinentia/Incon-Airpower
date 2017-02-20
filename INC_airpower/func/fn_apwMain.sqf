@@ -33,6 +33,19 @@ switch (_operation) do {
 		};
 	};
 
+	case "engageTimout": {
+		[_callingObject] spawn {
+			params ["_callingObject"];
+			private _timer = 300;
+			waitUntil {
+				sleep 2;
+				_timer = _timer - 2;
+				(_timer < 1 || {!(isPlayer _callingObject)} || {!(alive _callingObject)})
+			};
+			missionNameSpace setVariable ["APW_airpowerEngaging",false,true];
+		};
+	};
+
 	case "initPlayer": {
 
 		if (isNil "APW_sunrise") then {
@@ -52,7 +65,7 @@ switch (_operation) do {
 			        0,
 			        "NONE"
 			    ];
-				
+
 				missionNamespace setVariable ["hqObject",_hqObject,true];
 			};
 		};

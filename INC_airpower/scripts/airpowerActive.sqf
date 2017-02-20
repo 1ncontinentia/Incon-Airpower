@@ -6,6 +6,8 @@ private ["_ammoAvailable","_airpowerLaser","_tgt","_speed","_seconds","_ammo","_
 
 if (!local _callingObject) exitWith {};
 
+[_callingObject,"engageTimout"] remoteExecCall ["APW_fnc_APWMain",2];
+
 if !(_necItem in (assignedItems _callingObject)) exitWith {hint "You are missing the required communication device."};
 
 if (_fullVP && !_repeat) then {
