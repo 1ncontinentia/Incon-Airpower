@@ -13,8 +13,6 @@ _cdePass = true;
 if (!_repeat) then {
 
 	if (_fullVP) then {_callingObject globalChat format ["Marking target with laser. Standby for confirmation.",(mapGridPosition _callingObject)]};
-
-	sleep (1 + (random 2));
 };
 
 //Confirm target marked action
@@ -329,7 +327,10 @@ if (_fullVP) then {
 			_callingObject globalChat format ["Restrictions per ROE. Ground commander's intent is to destroy marked targets with a coordinated strike.",(_callingObject getVariable ["APW_ammoType","missile"])];
 		};
 		case false: {
-			_callingObject globalChat format ["Restrictions per ROE. Ground commander's intent is to destroy marked target with a %1.",(_callingObject getVariable ["APW_ammoType","missile"])];
+			private _strikeAmmo = "missile";
+			if ((count ((_callingObject getVariable ["APW_targetArray",[]]) select {(((_x getVariable "APW_ammoType") find "bomb") >= 0)})) != 0) then {_strikeAmmo = "bomb"};
+
+			_callingObject globalChat format ["Restrictions per ROE. Ground commander's intent is to destroy marked target with a %1.",_strikeAmmo];
 		};
 	};
 };
@@ -481,7 +482,7 @@ if ((count _missileTargets != 0) && (count _bombTargets != 0)) then {};
 _delayedMissiles = ((count _missileTargets != 0) && (count _bombTargets != 0));
 
 [] spawn {
-	sleep 180;
+	sleep 280;
 	missionNameSpace setVariable ["APW_airpowerEngaging",false];
 };
 

@@ -1,4 +1,4 @@
-params [["_callingObject",player],["_hqObject",hqObject],["_aircraftObject",APW_apTrig],["_repeat",false]];
+params [["_callingObject",player],["_hqObject",hqObject],["_repeat",false]];
 
 private ["_ammoAvailable","_airpowerLaser","_tgt","_speed","_seconds","_ammo","_bomb","_travelTime","_relDirHor","_relDirVer","_velocityX","_velocityY","_velocityZ","_velocityForCheck","_nearbyCivilians","_primaryTarget"];
 
@@ -29,11 +29,12 @@ if (!_repeat) then {
 //Check air unit has ammo available
 //=======================================================================//
 
-_ammoAvailable = [_callingObject,"AmmoAvailable",[_aircraftObject]] call APW_fnc_APWMain;
+_ammoAvailable = [_callingObject,"AmmoAvailable"] call APW_fnc_APWMain;
 
 //If there's no ammo available, exit with hint
 if (!_ammoAvailable) exitWith {
-	hint format ["%1 ordnance expended.",_airCallsign]
+	_hqObject globalChat format ["%1: %2, %3. Ordnance expended.",_airCallsign,(group _callingObject),_airCallsign];
+	missionNameSpace setVariable ["APW_airpowerEngaging", false, true];
 };
 
 

@@ -10,10 +10,65 @@ switch (_operation) do {
 
 	case "createRadTrig": {
 	    APW_apSpwnTrig = createTrigger ["EmptyDetector", [0,0,0], false];
-	    _triggerStatements = format ["[player,'Menu'] call APW_fnc_actionHandler;"];
+	    _triggerStatements = format ["[[player,player], 'INC_airpower\scripts\airpowerSpawn.sqf'] remoteExec ['execVM',2]"];
 	    APW_apSpwnTrig setTriggerActivation["ALPHA","PRESENT",true];
 	    APW_apSpwnTrig setTriggerStatements["this", _triggerStatements, ""];
-	    1 setRadioMsg "Interact with CAS";
+	    1 setRadioMsg "Request CAS";
+	};
+
+	case "createRadTrigAP": {
+		_APW_apTrig = createTrigger ["EmptyDetector", [0,0,0], true];
+	    _triggerStatements = format ["[player,'Menu'] call APW_fnc_actionHandler"];
+	    _APW_apTrig setTriggerActivation["CHARLIE","PRESENT",true];
+	    _APW_apTrig setTriggerStatements["this", _triggerStatements, ""];
+	    3 setRadioMsg "Interact with CAS";
+
+		[_APW_apTrig] spawn {
+			params ["_APW_apTrig"];
+			waitUntil {
+				sleep 1;
+				!(missionNamespace getVariable ["APW_airAssetContactable",false])
+			};
+			deleteVehicle _APW_apTrig;
+		};
+	};
+
+	case "initPlayer": {
+
+		if (isNil "APW_sunrise") then {
+		    missionNamespace setVariable ["APW_sunrise",((date call BIS_fnc_sunriseSunsetTime) select 0),true];
+		    missionNamespace setVariable ["APW_sunset",((date call BIS_fnc_sunriseSunsetTime) select 1),true];
+		    missionNamespace setVariable ["APW_hqCallsign",_hqCallsign,true];
+		    missionNamespace setVariable ["APW_airCallsign",_airCallsign,true];
+			missionNamespace setVariable ["APW_necItem",_necItem,true];
+
+			if (isNil "hqObject") then {
+
+			    _HQLogicGrp = createGroup _sideFriendly;
+			    _hqObject = _HQLogicGrp createUnit [
+			        "Logic",
+			        [0,0,0],
+			        [],
+			        0,
+			        "NONE"
+			    ];
+				
+				missionNamespace setVariable ["hqObject",_hqObject,true];
+			};
+		};
+
+		if (player getVariable ["APW_initRadioTrig",false]) then {[player,"createRadTrig"] call APW_fnc_APWMain};
+		if (player getVariable ["APW_initAddaction",false]) then {
+		    player addaction ["Request CAS","[[player,player], 'INC_airpower\scripts\airpowerSpawn.sqf'] remoteExec ['execVM',2]",[],1,false,true,"","(_this == _target) && !(missionNamespace getVariable ['APW_airAssetContactable',false]) && {APW_necItem in (assignedItems _this)}"];
+		    player addEventHandler ["Respawn",{
+		        player addaction ["Request CAS","[[player,player], 'INC_airpower\scripts\airpowerSpawn.sqf'] remoteExec ['execVM',2]",[],1,false,true,"","(_this == _target) && !(missionNamespace getVariable ['APW_airAssetContactable',false]) && {APW_necItem in (assignedItems _this)}"];
+		    }];
+		};
+
+		if (missionNamespace getVariable ["APW_airAssetContactable",false]) then {
+			[player,"createRadTrigAP"] remoteExecCall ["APW_fnc_APWMain",player];
+			"Interact with CAS using Radio Charlie in the Radio Menu" remoteExec ["hint",player];
+		};
 	};
 
 	case "NilVars": {
@@ -97,7 +152,7 @@ switch (_operation) do {
 
 	case "SetAmmo": {
 
-		_args params [["_aircraftObject",APW_apTrig],["_ammoType","bomb"],["_ammoExpended",1]];
+		_args params [["_ammoType","bomb"],["_ammoExpended",1]];
 
 		private ["_ammoArray","_newAmmoCount"];
 
@@ -442,14 +497,14 @@ switch (_operation) do {
 	case "GetStatus": {
 		_return = false;
 
-		switch (missionNamespace getVariable ["","Ready"]) do {
+		switch (missionNamespace getVariable ["APW_airAssetStatus","Ready"]) do {
 			case "OnRoute": {
-	            _time = missionNamespace getVariable ["APW_minutesLeft",0];
+	            _time = missionNamespace getVariable ["APW_timer",0];
 				hqObject globalChat format ["%1: %2 is %3 mikes out.",_hqCallsign,_airCallsign,_time];
 			};
 
 			case "OnStation": {
-	            _time = missionNamespace getVariable ["APW_minutesLeft",0];
+	            _time = missionNamespace getVariable ["APW_timer",0];
 				_ammoArray = missionNamespace getVariable ["APW_ammoArray",[_bomb,_missile]];
 				_ammoArray params [["_bombsRemaining",_bomb],["_missilesRemaining",_missile]];
 				hqObject globalChat format ["%1: %1 is on station. %2 missiles, %3 bombs remaining. %4 mikes until bingo.",_airCallsign,_missilesRemaining,_bombsRemaining,_time];
@@ -457,14 +512,14 @@ switch (_operation) do {
 			};
 
 			case "Return": {
-	            _time = missionNamespace getVariable ["APW_minutesLeft",0];
+	            _time = missionNamespace getVariable ["APW_timer",0];
 				hqObject globalChat format ["%1: %2 is RTB. Back at base in %3 mikes.",_hqCallsign,_airCallsign,_time];
 			};
 
 			case "Rearm": {
-	            _time = missionNamespace getVariable ["APW_minutesLeft",0];
+	            _time = missionNamespace getVariable ["APW_timer",0];
 				if ((missionNamespace getVariable ["APW_sortiesLeft",_maxSorties]) > 0) then {
-					hqObject globalChat format ["%1: %2 is being turned around. %3 mikes until %2 is rearmed.",_hqCallsign,_airCallsign,_time];
+					hqObject globalChat format ["%1: %2 is being turned around.",_hqCallsign,_airCallsign,_time];
 				} else {
 					hqObject globalChat format ["%1: %2 is unavailable.",_hqCallsign,_airCallsign];
 				};

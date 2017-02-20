@@ -3,7 +3,7 @@
 Script package for Arma 3 mission makers that allows players to call in air support for target tracking and air strikes.
 Unlike other CAS scripts, Incon Airpower simulates high-altitude strikes where the aircraft is neither visible nor audible from the ground.
 The aicraft itself is not spawned, only simulated.
-Ideal for single player and COOP (lots of players using tracking may cause considerable server lag but you can turn this off). Not for PVP. 
+Ideal for single player and COOP (lots of players using tracking may cause considerable server lag but you can turn this off). Not for PVP.
 SP, MP and dedi compatible (MP and dedi are experimental, let me know if there are issues).
 
 ###### Requires CBA

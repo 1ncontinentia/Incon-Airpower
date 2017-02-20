@@ -19,7 +19,7 @@ _this spawn {
 
 		case "autoGuideOrdnance": {
 
-			_args params [["_launchPos",[0,0,15000]],"_primaryTarget",["_primaryLaunch",false],["_delayedLaunch",false],["_aircraftObject",APW_apTrig]];
+			_args params [["_launchPos",[0,0,15000]],"_primaryTarget",["_primaryLaunch",false],["_delayedLaunch",false]];
 
 			//Get ordnance type
 			switch (_primaryTarget getVariable ["APW_ammoType","missile"]) do {
@@ -28,7 +28,7 @@ _this spawn {
 
 					private ["_guideProjectile","_message","_laserObject","_ammoAvailable","_target","_speed","_perSecondChecks","_ordnance","_projectile","_travelTime","_relDirVer","_velocityX","_velocityY","_velocityZ","_velocityForCheck"];
 
-					[_callingObject,"SetAmmo",[_aircraftObject,"bomb",1]] call APW_fnc_APWMain;
+					[_callingObject,"SetAmmo",["bomb",1]] call APW_fnc_APWMain;
 
 					_ordnance = "Bo_GBU12_LGB";
 					_speed = 200;
@@ -163,7 +163,7 @@ _this spawn {
 
 					private ["_guideProjectile","_message","_laserObject","_ammoAvailable","_target","_speed","_perSecondChecks","_ordnance","_projectile","_travelTime","_relDirVer","_velocityX","_velocityY","_velocityZ","_velocityForCheck"];
 
-					[_callingObject,"SetAmmo",[_aircraftObject,"missile",1]] call APW_fnc_APWMain;
+					[_callingObject,"SetAmmo",["missile",1]] call APW_fnc_APWMain;
 
 					_ordnance = "M_Scalpel_AT";
 					_speed = 450;
@@ -305,7 +305,7 @@ _this spawn {
 
 		case "strikeAftermath": {
 
-			_args params [["_ammoExpended",0],["_aircraftObject",APW_apTrig]];
+			_args params [["_ammoExpended",0]];
 
 			private ["_strikeType"];
 
@@ -313,20 +313,12 @@ _this spawn {
 
 			sleep (random 2);
 
-			_ammoAvailable = [_callingObject,"SetAmmo",[_aircraftObject,_strikeType,_ammoExpended]] call APW_fnc_APWMain;
+			_ammoAvailable = [_callingObject,"SetAmmo",[_strikeType,_ammoExpended]] call APW_fnc_APWMain;
 
 			//If out of ammo, delete the mofo
 			if (!_ammoAvailable) exitWith {
 
-				if (!isNil "_aircraftObject") then {deleteVehicle _aircraftObject};
-
 				if (_rtbOnNoAmmo) then {
-
-					if (!isNil "APW_apAbtTrig") then {deleteVehicle APW_trackTrig};
-
-					if (!isNil "APW_apAbtTrig") then {deleteVehicle APW_trackClearTrig};
-
-					if (!isNil "APW_apAbtTrig") then {deleteVehicle APW_apAbtTrig};
 
 					sleep 10;
 
