@@ -13,6 +13,7 @@ _percentage = 100;                      //Percentage chance that the aircraft wi
 _hqCallsign = "DARK HORSE";             //Callsign for HQ element
 _airCallsign = "Grendel 1-4";           //Aircraft callsign
 _nightTimeOnly = false;                 //Is activity limited to night-time only sorties?
+_useRadioTriggers = true;               //Interact with CAS using Radio Charlie
 
 //Player options
 _necItem = "ItemRadio";                 //Required item to call for air support (must be in the unit's assigned items - i.e. laser designator or UAV terminal, but not smoke grenade).

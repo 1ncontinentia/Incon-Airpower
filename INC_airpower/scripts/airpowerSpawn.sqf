@@ -59,7 +59,9 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= APW_sunset
 
 	missionNamespace setVariable ["APW_airAssetContactable", true, true]; //Prevents multiple requests for aircraft
 
-    "Interact with CAS using Radio Charlie in the Radio Menu" remoteExec ["hint",_caller];
+    if (_useRadioTriggers) then {
+        "Interact with CAS using Radio Charlie in the Radio Menu" remoteExec ["hint",_caller];
+    };
 
     [_airpowerEta] spawn {
         params ["_secs"];

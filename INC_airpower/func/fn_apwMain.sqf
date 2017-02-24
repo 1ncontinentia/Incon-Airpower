@@ -17,19 +17,21 @@ switch (_operation) do {
 	};
 
 	case "createRadTrigAP": {
-		_APW_apTrig = createTrigger ["EmptyDetector", [0,0,0], true];
-	    _triggerStatements = format ["[player,'Menu'] call APW_fnc_actionHandler"];
-	    _APW_apTrig setTriggerActivation["CHARLIE","PRESENT",true];
-	    _APW_apTrig setTriggerStatements["this", _triggerStatements, ""];
-	    3 setRadioMsg "Interact with CAS";
+		if (_useRadioTriggers) then {
+			_APW_apTrig = createTrigger ["EmptyDetector", [0,0,0], true];
+		    _triggerStatements = format ["[player,'Menu'] call APW_fnc_actionHandler"];
+		    _APW_apTrig setTriggerActivation["CHARLIE","PRESENT",true];
+		    _APW_apTrig setTriggerStatements["this", _triggerStatements, ""];
+		    3 setRadioMsg "Interact with CAS";
 
-		[_APW_apTrig] spawn {
-			params ["_APW_apTrig"];
-			waitUntil {
-				sleep 1;
-				!(missionNamespace getVariable ["APW_airAssetContactable",false])
+			[_APW_apTrig] spawn {
+				params ["_APW_apTrig"];
+				waitUntil {
+					sleep 1;
+					!(missionNamespace getVariable ["APW_airAssetContactable",false])
+				};
+				deleteVehicle _APW_apTrig;
 			};
-			deleteVehicle _APW_apTrig;
 		};
 	};
 
@@ -68,6 +70,13 @@ switch (_operation) do {
 
 				missionNamespace setVariable ["hqObject",_hqObject,true];
 			};
+		};
+
+		if !(_useRadioTriggers) then {
+			player addaction ["Interact with CAS","[player,'Menu'] call APW_fnc_actionHandler",[],1,false,true,"","(_this == _target) && (missionNamespace getVariable ['APW_airAssetContactable',false]) && {APW_necItem in (assignedItems _this)}"];
+			player addEventHandler ["Respawn",{
+		        player addaction ["Interact with CAS","[player,'Menu'] call APW_fnc_actionHandler",[],1,false,true,"","(_this == _target) && (missionNamespace getVariable ['APW_airAssetContactable',false]) && {APW_necItem in (assignedItems _this)}"];
+		    }];
 		};
 
 		if (player getVariable ["APW_initRadioTrig",false]) then {[player,"createRadTrig"] call APW_fnc_APWMain};
