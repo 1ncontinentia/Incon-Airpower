@@ -218,7 +218,7 @@ if ((_percentage > (random 100)) && ((!_nightTimeOnly) || (daytime >= APW_sunset
 
 
 
-if (!(_nightTimeOnly) || {(daytime >= _dusk || daytime < _dawn)}) then {
+if (!(_nightTimeOnly) || {(daytime >= APW_sunset || daytime < APW_sunrise)}) then {
 
 	missionNamespace setVariable ["APW_airAssetRequested", true, true]; //Prevents multiple requests for aircraft
 	sleep (5 + (random 10));
