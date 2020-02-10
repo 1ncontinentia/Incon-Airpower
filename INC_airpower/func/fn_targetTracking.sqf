@@ -94,6 +94,7 @@ _this spawn {
 						{
 							_x setMarkerAlphaLocal _i;
 						} forEach _markers;
+						false; 
 					} else {
 						{
 							deleteMarkerLocal _x;
